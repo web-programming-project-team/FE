@@ -1,0 +1,30 @@
+:root {
+  --color-primary: #0F9D8A;
+  --color-primary-soft: #E7F6F3;
+  --color-bg: #F5F6F8;
+  --color-card: #FFFFFF;
+  --color-line: #E5E7EB;
+  --color-text: #111827;
+  --color-text-2: #374151;
+  --color-text-3: #6B7280;
+  --color-danger: #E5484D;   /* D-3 이하 */
+  --color-warn: #F59E0B;     /* D-4 ~ D-7 */
+
+  /* 진행상태 배지: 글자 / 배경 */
+  --st-to-check: #6B7280;    --st-to-check-bg: #F3F4F6;
+  --st-interested: #0284C7;  --st-interested-bg: #E0F2FE;
+  --st-planned: #7C3AED;     --st-planned-bg: #F3EEFF;
+  --st-applied: #0F766E;     --st-applied-bg: #E7F6F3;
+  --st-in-progress: #16A34A; --st-in-progress-bg: #ECFDF3;
+  --st-completed: #1F2937;   --st-completed-bg: #E5E7EB;
+
+  --radius-card: 16px;
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
