@@ -1,0 +1,73 @@
+.wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  height: 24px;
+  padding-inline: var(--space-2-5);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ▾ 모양 삼각형 */
+.caret {
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid currentColor;
+}
+
+.toCheck { color: var(--st-to-check); background: var(--st-to-check-bg); }
+.interested { color: var(--st-interested); background: var(--st-interested-bg); }
+.planned { color: var(--st-planned); background: var(--st-planned-bg); }
+.applied { color: var(--st-applied); background: var(--st-applied-bg); }
+.inProgress { color: var(--st-in-progress); background: var(--st-in-progress-bg); }
+.completed { color: var(--st-completed); background: var(--st-completed-bg); }
+
+.menu {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: 30;
+  min-width: 140px;
+  padding: var(--space-1);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  box-shadow: var(--shadow-pop);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-2-5);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text-2);
+  text-align: left;
+}
+
+.option:hover {
+  background: var(--color-bg);
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.check {
+  margin-left: auto;
+  color: var(--color-primary);
+}

@@ -20,10 +20,15 @@ React 19 · Vite 8 · react-router-dom · axios · JavaScript
 ```
 src/
 ├── api/         client.js (axios 인스턴스, 응답 껍데기 벗기기), 도메인별 파일
-├── components/  공통 컴포넌트 (StatusBadge, DdayTag, Chip ...)
+├── components/  공통 컴포넌트 (폴더마다 .jsx + .module.css)
 ├── constants/   enumLabels.js (서버 enum → 화면 표시명)
+├── context/     AppState.jsx (API 연결 전 화면 간 공유 상태)
 ├── hooks/
-├── layouts/     AppLayout (헤더 + 메뉴 4개), AuthLayout
+├── layouts/     AppLayout (헤더 + 메뉴 4개), AuthLayout, AdminLayout
+├── mocks/       data.js (Figma 시안 예시 데이터)
 ├── pages/       화면 단위 폴더
-└── styles/      tokens.css (색·글꼴 토큰)
+├── styles/      tokens.css (디자인 토큰), global.css
+└── utils/       날짜·D-day 등 도우미
 ```
+
+스타일은 CSS Module을 쓰고, 색·간격·글자 크기·모서리·그림자는 `tokens.css` 변수만 사용한다.

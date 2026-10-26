@@ -1,0 +1,68 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: var(--color-overlay);
+  overflow-y: auto;
+}
+
+.dialog {
+  width: 100%;
+  padding: var(--space-8);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  box-shadow: var(--shadow-pop);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.description {
+  margin-top: var(--space-2);
+  font-size: var(--fs-base);
+  color: var(--color-text-3);
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-2);
+}
+
+.close:hover {
+  background: var(--color-fill);
+}
+
+.body {
+  margin-top: var(--space-6);
+}
+
+.footer {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-line);
+}
+
+@media (max-width: 560px) {
+  .dialog {
+    padding: var(--space-6);
+  }
+}

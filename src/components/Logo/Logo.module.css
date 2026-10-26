@@ -1,0 +1,50 @@
+.badgeLogo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2-5);
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-card);
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+
+.badgeText {
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.wordmark {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.next {
+  color: var(--color-primary);
+}
+
+.md {
+  font-size: 22px;
+}
+
+.lg {
+  font-size: var(--fs-3xl);
+}
+
+/* 좁은 화면 헤더에서는 N 배지만 남겨 메뉴 자리를 확보 */
+@media (max-width: 720px) {
+  .badgeText {
+    display: none;
+  }
+}
