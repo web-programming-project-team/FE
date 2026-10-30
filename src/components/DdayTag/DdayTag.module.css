@@ -1,0 +1,25 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding-inline: var(--space-2-5);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.danger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.warn {
+  background: var(--color-warn-soft);
+  color: var(--color-warn);
+}
+
+.neutral {
+  background: var(--color-fill);
+  color: var(--color-text-2);
+}

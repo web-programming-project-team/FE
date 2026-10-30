@@ -1,0 +1,40 @@
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+}
+
+.on {
+  color: var(--color-primary);
+  fill: var(--color-primary);
+}
+
+.off {
+  color: var(--color-primary);
+  fill: none;
+}
+
+.score {
+  margin-left: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text-2);
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.input .off {
+  color: var(--color-line);
+  fill: var(--color-line);
+}
+
+.inputScore {
+  margin-left: var(--space-2);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--color-text-2);
+}

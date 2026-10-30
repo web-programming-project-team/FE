@@ -1,0 +1,331 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.muted {
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.description {
+  margin-top: var(--space-2);
+  font-size: var(--fs-base);
+  color: var(--color-text-3);
+}
+
+.notiButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-text-2);
+}
+
+.notiButton span {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--color-danger-soft);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--side-width);
+  align-items: start;
+  gap: var(--space-6);
+}
+
+/* 달력 */
+.calHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.monthNav button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-2);
+}
+
+.monthNav button:hover {
+  background: var(--color-fill);
+}
+
+.month {
+  margin-right: var(--space-4);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+}
+
+.base {
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-4);
+  font-size: var(--fs-xs);
+  color: var(--color-text-2);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+}
+
+.small {
+  width: 6px;
+  height: 6px;
+  margin-top: var(--space-1-5);
+}
+
+.applyStart { background: var(--ev-apply-start); }
+.applyEnd { background: var(--ev-apply-end); }
+.counseling { background: var(--ev-counseling); }
+.participation { background: var(--ev-participation); }
+.jobDeadline { background: var(--ev-job-deadline); }
+.custom { background: var(--ev-custom); }
+
+.gridWrap {
+  margin-top: var(--space-5);
+  overflow-x: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(84px, 1fr));
+  border-left: 1px solid var(--color-line);
+  border-top: 1px solid var(--color-line);
+}
+
+.weekday {
+  padding: var(--space-3) 0;
+  border-right: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  text-align: center;
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-height: 112px;
+  padding: var(--space-3);
+  border-right: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-card);
+  text-align: left;
+}
+
+.cell:hover {
+  background: var(--color-bg);
+}
+
+.outside {
+  background: var(--color-bg);
+}
+
+.outside .dayNum {
+  color: var(--color-text-4);
+}
+
+.selected,
+.selected:hover {
+  background: var(--color-primary-soft);
+}
+
+.dayNum {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.selected .dayNum {
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-card);
+  font-weight: 700;
+}
+
+.today:not(.selected) .dayNum {
+  border-radius: var(--radius-pill);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  color: var(--color-primary);
+}
+
+.cellEvents {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.cellEvent {
+  display: flex;
+  gap: var(--space-1-5);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--color-text-2);
+}
+
+/* 사이드 */
+.side {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.selHead {
+  display: flex;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.selDate {
+  margin-top: var(--space-4);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+
+.selDate span {
+  font-weight: 400;
+  color: var(--color-text-3);
+}
+
+.noEvent {
+  margin-top: var(--space-5);
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.selList li {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  padding-block: var(--space-5);
+}
+
+.selList li + li {
+  border-top: 1px solid var(--color-line);
+}
+
+.selList li:last-child {
+  padding-bottom: 0;
+}
+
+.selType {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.selTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.selTitle svg {
+  color: var(--color-text-3);
+}
+
+.selTitle:hover {
+  color: var(--color-primary-strong);
+}
+
+.weekList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-5);
+}
+
+.weekList li + li {
+  border-top: 1px solid var(--color-line);
+}
+
+.weekList li > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.weekList strong {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+
+.weekNote {
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--fs-xs);
+  color: var(--color-text-3);
+}
+
+@media (max-width: 1024px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

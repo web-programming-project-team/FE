@@ -1,0 +1,140 @@
+.panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 40;
+  width: min(380px, calc(100vw - var(--space-8)));
+  max-height: calc(100vh - var(--header-height) - var(--space-6));
+  overflow-y: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  box-shadow: var(--shadow-pop);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-6) 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+}
+
+.count {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.readAll {
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.readAll:hover {
+  color: var(--color-text);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+  padding-inline: var(--space-6);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.tab {
+  padding: var(--space-2) var(--space-1);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-text-3);
+  border-bottom: 2px solid transparent;
+}
+
+.tabActive {
+  color: var(--color-primary);
+  font-weight: 600;
+  border-bottom-color: var(--color-primary);
+}
+
+.list {
+  padding: var(--space-2) var(--space-6) var(--space-4);
+}
+
+.list li + li {
+  border-top: 1px solid var(--color-fill);
+}
+
+.item {
+  position: relative;
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-4) 0 var(--space-4) var(--space-5);
+  text-align: left;
+}
+
+.dot {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+}
+
+.read .dot {
+  background: transparent;
+}
+
+.read .itemTitle {
+  color: var(--color-text-3);
+}
+
+.category {
+  font-size: var(--fs-xs);
+  color: var(--color-text-3);
+}
+
+.urgent {
+  color: var(--color-danger);
+}
+
+.itemTitle {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.dday {
+  margin-left: var(--space-1-5);
+  font-style: normal;
+  color: var(--color-danger);
+}
+
+.body {
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.empty {
+  padding: var(--space-8) 0;
+  text-align: center;
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
