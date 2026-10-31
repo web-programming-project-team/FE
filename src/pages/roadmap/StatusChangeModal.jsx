@@ -4,19 +4,24 @@ import Button from '../../components/Button/Button.jsx'
 import { ChipGroup } from '../../components/Chip/Chip.jsx'
 import { INTEREST_FIELD, LIFE_STAGE } from '../../constants/enumLabels.js'
 import { useAppState } from '../../context/AppState.jsx'
+import { sameValues } from '../../utils/set.js'
 import styles from './StatusChangeModal.module.css'
 
-export default function StatusChangeModal({ open, onClose }) {
-  const { profile, updateProfile } = useAppState()
+export default function StatusChangeModal({ open, onClose, onRenewed }) {
+  const { profile, updateProfile, resetRoadmap } = useAppState()
   const [lifeStages, setLifeStages] = useState(profile.lifeStages)
-  const [interestFields, setInterestFields] = useState(profile.interestFields)
+  const [interests, setInterests] = useState(profile.interests)
 
-  const valid = lifeStages.length > 0 && interestFields.length > 0
-  const focus = interestFields.map((f) => INTEREST_FIELD[f]).join('·')
+  const changed =
+    !sameValues(lifeStages, profile.lifeStages) || !sameValues(interests, profile.interests)
+  const valid = lifeStages.length > 0 && interests.length > 0 && changed
+  const focus = interests.map((f) => INTEREST_FIELD[f]).join('·')
 
   const onSubmit = () => {
-    // TODO(9주차): PUT /users/me/status → 새 로드맵 생성, 기존 로드맵은 활동 기록으로 보관
-    updateProfile({ lifeStages, interestFields })
+    // TODO(9주차): POST /users/me/life-stage-change 응답의 새 로드맵으로 교체 (기존 로드맵은 서버가 보관)
+    updateProfile({ lifeStages, interests })
+    resetRoadmap()
+    onRenewed()
     onClose()
   }
 
@@ -44,7 +49,7 @@ export default function StatusChangeModal({ open, onClose }) {
       <h3 className={styles.label}>
         관심분야 <span className={styles.hint}>여러 개 선택할 수 있어요</span>
       </h3>
-      <ChipGroup options={INTEREST_FIELD} values={interestFields} onChange={setInterestFields} />
+      <ChipGroup options={INTEREST_FIELD} values={interests} onChange={setInterests} />
 
       {valid && (
         <p className={styles.notice}>

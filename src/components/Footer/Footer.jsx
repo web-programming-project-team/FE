@@ -1,13 +1,9 @@
 import styles from './Footer.module.css'
 
-export default function Footer({ note = '예시 데이터 · 기준일 2026.10.25' }) {
+export default function Footer({ note = '나에게 필요한 지원을 찾고, 다음 걸음을 준비해요.' }) {
   return (
     <footer className={styles.footer}>
-      <p>
-        <strong>NEXT 시흥</strong>
-        <span aria-hidden="true">·</span>
-        NextStep
-      </p>
+      <strong>NEXT 시흥</strong>
       <p>{note}</p>
     </footer>
   )

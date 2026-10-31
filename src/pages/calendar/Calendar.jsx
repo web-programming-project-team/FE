@@ -7,10 +7,11 @@ import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
 import { EVENT_TYPE } from '../../constants/enumLabels.js'
 import { BASE_DATE, events, policyById } from '../../mocks/data.js'
 import { useAppState } from '../../context/AppState.jsx'
-import { formatDot, formatShort, parseDate, toIso, today, weekdayOf } from '../../utils/date.js'
+import { formatDot, formatShort, formatTime, parseDate, toIso, today, weekdayOf } from '../../utils/date.js'
 import styles from './Calendar.module.css'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+const policyOf = (e) => (e.sourceType === 'POLICY' ? policyById(e.sourceId) : null)
 const DOT = {
   APPLY_START: styles.applyStart,
   APPLY_END: styles.applyEnd,
@@ -154,20 +155,20 @@ function SelectedDay({ date, list }) {
       ) : (
         <ul className={styles.selList}>
           {list.map((e) => {
-            const policy = e.policyId ? policyById(e.policyId) : null
+            const policy = policyOf(e)
             const target = policy ? `/policies/${policy.policyId}` : '/jobs'
             return (
               <li key={e.eventId}>
                 <p className={styles.selType}>
                   <span className={`${styles.dot} ${DOT[e.type]}`} aria-hidden="true" />
                   {EVENT_TYPE[e.type]}
-                  {e.time && ` · ${e.time}`}
+                  {e.eventTime && ` · ${formatTime(e.eventTime)}`}
                 </p>
                 <Link to={target} className={styles.selTitle}>
                   {policy?.title ?? e.title}
                   <ChevronRight size={18} aria-hidden="true" />
                 </Link>
-                {(e.place || policy) && <p className={styles.muted}>{e.place ?? policy.organization}</p>}
+                {policy && <p className={styles.muted}>{policy.agency}</p>}
                 {policy && (
                   <StatusSelect
                     value={policyStatus(policy.policyId)}
@@ -200,7 +201,7 @@ function WeekDeadlines() {
       </p>
       <ul className={styles.weekList}>
         {list.map((e) => {
-          const policy = e.policyId ? policyById(e.policyId) : null
+          const policy = policyOf(e)
           return (
             <li key={e.eventId}>
               <div>

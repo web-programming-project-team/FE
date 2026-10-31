@@ -12,12 +12,14 @@ import {
   EMPLOYMENT_TYPE,
   JOB_CATEGORY,
   LIFE_STAGE,
+  authorStageLabel,
   PREP_PERIOD,
   REGION,
 } from '../../constants/enumLabels.js'
-import { jobs, policyById, reviews } from '../../mocks/data.js'
+import { jobs, reviews } from '../../mocks/data.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { formatDot } from '../../utils/date.js'
+import { notificationPath, splitDday } from '../../utils/notification.js'
 import styles from './Jobs.module.css'
 
 const SORTS = {
@@ -26,23 +28,24 @@ const SORTS = {
 }
 
 export default function Jobs() {
-  const { profile, updateProfile } = useAppState()
+  const { profile, updateJobPreference } = useAppState()
+  const { regions, jobCategories, education } = profile.jobPreference
   const [filterOpen, setFilterOpen] = useState(false)
   const [sort, setSort] = useState('deadline')
 
   const list = useMemo(
     () =>
       jobs
-        .filter((j) => profile.regions.includes(j.region) && profile.jobCategories.includes(j.jobCategory))
+        .filter((j) => regions.includes(j.region) && jobCategories.includes(j.jobCategory))
         .sort(SORTS[sort].compare),
-    [profile.regions, profile.jobCategories, sort],
+    [regions, jobCategories, sort],
   )
 
   const regionLabel =
-    profile.regions.length === Object.keys(REGION).length
+    regions.length === Object.keys(REGION).length
       ? '시흥·인접지역'
-      : profile.regions.map((r) => REGION[r]).join('·')
-  const categoryLabel = profile.jobCategories.map((c) => JOB_CATEGORY[c].replace('·개발', '')).join('·')
+      : regions.map((r) => REGION[r]).join('·')
+  const categoryLabel = jobCategories.map((c) => JOB_CATEGORY[c].replace('·개발', '')).join('·')
   const graduating = profile.lifeStages.includes('GRADUATING')
 
   return (
@@ -52,7 +55,7 @@ export default function Jobs() {
         <p className={styles.description}>내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요.</p>
         <div className={styles.conditions}>
           {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
-          <Tag tone="outline">{EDUCATION[profile.education]}</Tag>
+          <Tag tone="outline">{EDUCATION[education]}</Tag>
           <Tag tone="outline">신입</Tag>
           {categoryLabel && <Tag tone="outline">{categoryLabel}</Tag>}
           <Tag tone="outline">{EMPLOYMENT_TYPE.FULL_TIME}</Tag>
@@ -68,9 +71,9 @@ export default function Jobs() {
         </button>
         {filterOpen && (
           <JobFilter
-            regions={profile.regions}
-            jobCategories={profile.jobCategories}
-            onChange={(patch) => updateProfile(patch)}
+            regions={regions}
+            jobCategories={jobCategories}
+            onChange={updateJobPreference}
           />
         )}
       </header>
@@ -80,7 +83,7 @@ export default function Jobs() {
           <div className={styles.listHead}>
             <h2 id="job-list-title" className={styles.listTitle}>
               맞춤 공고 <span>{list.length}</span>
-              <small>고용24 채용정보 기준</small>
+              <small>사람인·관리자 등록 공고 기준</small>
             </h2>
             <label>
               <span className="sr-only">정렬</span>
@@ -146,7 +149,7 @@ function JobCard({ job }) {
           <span className={styles.divider} aria-hidden="true" />
           {formatDot(job.deadline)} 마감
         </p>
-        <Button variant="outline" href={job.applyUrl}>
+        <Button variant="outline" href={job.originalUrl}>
           공식 사이트 <ExternalLink size={14} aria-hidden="true" />
         </Button>
       </div>
@@ -154,7 +157,7 @@ function JobCard({ job }) {
       <div className={styles.support}>
         <p className={styles.supportTitle}>이 공고에 도움 되는 지원</p>
         <ul className={styles.supportList}>
-          {job.relatedPolicyIds.map(policyById).map((p) => (
+          {job.helpfulPolicies.map((p) => (
             <li key={p.policyId}>
               <Link to={`/policies/${p.policyId}`} className={styles.supportLink}>
                 {p.title} <ChevronRight size={12} aria-hidden="true" />
@@ -178,15 +181,15 @@ function PassReviews() {
         {list.map((r) => (
           <li key={r.postId}>
             <Link to="/community" className={styles.pass}>
-              <span className={styles.passStage}>{r.authorStage}</span>
-              <strong>{r.title}</strong>
+              <span className={styles.passStage}>{authorStageLabel(r)}</span>
+              <strong>{r.oneLiner}</strong>
               <span className={styles.passTags}>
                 {r.helpfulPoints.map((t) => (
                   <Tag key={t}>{t}</Tag>
                 ))}
               </span>
               <span className={styles.passMeta}>
-                {policyById(r.policyId).title} · 준비 {PREP_PERIOD[r.prepPeriod]}
+                {r.policy.title} · 준비 {PREP_PERIOD[r.prepPeriod]}
               </span>
             </Link>
           </li>
@@ -213,15 +216,18 @@ function NewNotifications() {
         <p className={styles.sideDescription}>새 알림이 없어요.</p>
       ) : (
         <ul className={styles.notiList}>
-          {unread.slice(0, 3).map((n) => (
-            <li key={n.notificationId}>
-              <Link to={n.link}>
-                {n.title}
-                {n.dday && <b className={styles.urgent}>{n.dday}</b>}
-              </Link>
-              <ArrowRight size={14} aria-hidden="true" />
-            </li>
-          ))}
+          {unread.slice(0, 3).map((n) => {
+            const [text, dday] = splitDday(n.title)
+            return (
+              <li key={n.notificationId}>
+                <Link to={notificationPath(n.link)}>
+                  {text}
+                  {dday && <b className={styles.urgent}>{dday}</b>}
+                </Link>
+                <ArrowRight size={14} aria-hidden="true" />
+              </li>
+            )
+          })}
         </ul>
       )}
     </Card>

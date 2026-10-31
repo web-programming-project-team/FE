@@ -1,6 +1,6 @@
 import styles from './Card.module.css'
 
-// 흰 배경 + 24px 모서리 + 그림자. padding: md(24) | none
+// 흰 배경 + 20px 모서리 + 1px 테두리. padding: md(24) | none
 export default function Card({ as: Tag = 'section', padding = 'md', className = '', children, ...rest }) {
   return (
     <Tag className={`${styles.card} ${styles[padding]} ${className}`} {...rest}>

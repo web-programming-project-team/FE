@@ -17,6 +17,7 @@ export default function Login() {
 
   return (
     <form className={styles.card} onSubmit={onSubmit}>
+      <h1 className="sr-only">로그인</h1>
       <div className={styles.brand}>
         <Logo variant="text" size="lg" />
         <p className={styles.tagline}>

@@ -5,7 +5,11 @@ import AdminLayout from './layouts/AdminLayout.jsx'
 import Login from './pages/auth/Login.jsx'
 import Signup from './pages/auth/Signup.jsx'
 import Onboarding from './pages/onboarding/Onboarding.jsx'
+import OnboardingDone from './pages/onboarding/OnboardingDone.jsx'
+import Home from './pages/home/Home.jsx'
+import Settings from './pages/settings/Settings.jsx'
 import Roadmap from './pages/roadmap/Roadmap.jsx'
+import Policies from './pages/policy/Policies.jsx'
 import PolicyDetail from './pages/policy/PolicyDetail.jsx'
 import Jobs from './pages/jobs/Jobs.jsx'
 import JobDetail from './pages/jobs/JobDetail.jsx'
@@ -26,9 +30,13 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
       </Route>
       <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/onboarding/done" element={<OnboardingDone />} />
 
       <Route element={<AppLayout />}>
-        <Route path="/" element={<Roadmap />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/roadmap" element={<Roadmap />} />
+        <Route path="/policies" element={<Policies />} />
         <Route path="/policies/:policyId" element={<PolicyDetail />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:jobId" element={<JobDetail />} />

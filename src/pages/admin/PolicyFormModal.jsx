@@ -6,28 +6,28 @@ import styles from './PolicyFormModal.module.css'
 
 const EMPTY = {
   title: '',
-  organization: '',
+  agency: '',
   field: 'EMPLOYMENT',
   target: '',
   content: '',
   contact: '',
-  applyStart: '',
-  applyEnd: '',
+  applyStartDate: '',
+  applyEndDate: '',
   recruitStatus: 'UPCOMING',
+  sourceUrl: '',
   applyUrl: '',
-  sourceName: '',
 }
 
 // 시안에 없는 화면 — "정책 등록" / "수정"에서 여는 입력 폼
 export default function PolicyFormModal({ policy, onClose, onSave }) {
   const [form, setForm] = useState(() => ({ ...EMPTY, ...policy }))
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }))
-  const rangeInvalid = form.applyStart && form.applyEnd && form.applyStart > form.applyEnd
+  const rangeInvalid = form.applyStartDate && form.applyEndDate && form.applyStartDate > form.applyEndDate
 
   const submit = (e) => {
     e.preventDefault()
     if (rangeInvalid) return
-    onSave({ ...form, sourceName: form.sourceName || form.organization })
+    onSave(form)
   }
 
   return (
@@ -45,7 +45,7 @@ export default function PolicyFormModal({ policy, onClose, onSave }) {
         </label>
         <label className={styles.field}>
           <span>운영기관</span>
-          <input className={styles.input} value={form.organization} onChange={set('organization')} required />
+          <input className={styles.input} value={form.agency} onChange={set('agency')} required />
         </label>
         <label className={styles.field}>
           <span>분야</span>
@@ -57,15 +57,15 @@ export default function PolicyFormModal({ policy, onClose, onSave }) {
         </label>
         <label className={styles.field}>
           <span>접수 시작</span>
-          <input className={styles.input} type="date" value={form.applyStart} onChange={set('applyStart')} required />
+          <input className={styles.input} type="date" value={form.applyStartDate} onChange={set('applyStartDate')} required />
         </label>
         <label className={styles.field}>
           <span>접수 마감</span>
           <input
             className={styles.input}
             type="date"
-            value={form.applyEnd}
-            onChange={set('applyEnd')}
+            value={form.applyEndDate}
+            onChange={set('applyEndDate')}
             aria-invalid={Boolean(rangeInvalid)}
             required
           />
@@ -93,6 +93,17 @@ export default function PolicyFormModal({ policy, onClose, onSave }) {
         </label>
         <label className={`${styles.field} ${styles.wide}`}>
           <span>공식 출처 URL</span>
+          <input
+            className={styles.input}
+            type="url"
+            placeholder="https://"
+            value={form.sourceUrl}
+            onChange={set('sourceUrl')}
+            required
+          />
+        </label>
+        <label className={`${styles.field} ${styles.wide}`}>
+          <span>신청 URL</span>
           <input
             className={styles.input}
             type="url"

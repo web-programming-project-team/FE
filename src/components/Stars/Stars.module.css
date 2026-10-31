@@ -5,12 +5,12 @@
 }
 
 .on {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   fill: var(--color-primary);
 }
 
 .off {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   fill: none;
 }
 

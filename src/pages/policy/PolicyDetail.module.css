@@ -94,7 +94,7 @@
   justify-self: start;
   font-size: var(--fs-sm);
   font-weight: 500;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .sectionHead {

@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-bottom: var(--space-6);
 }
 
 .header {
@@ -28,7 +27,7 @@
   padding: var(--space-10);
   border-radius: var(--radius-card);
   background: var(--color-card);
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-line);
 }
 
 .progressHead {
@@ -39,7 +38,7 @@
 
 .eyebrow {
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .stepCount {

@@ -54,3 +54,12 @@
   background: var(--color-primary-soft);
   color: var(--color-primary-strong);
 }
+
+.ghost {
+  color: var(--color-text-2);
+  font-weight: 500;
+}
+
+.ghost:hover {
+  background: var(--color-fill);
+}

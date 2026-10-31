@@ -4,8 +4,8 @@ import Modal from '../../components/Modal/Modal.jsx'
 import Button from '../../components/Button/Button.jsx'
 import { Chip, ChipGroup } from '../../components/Chip/Chip.jsx'
 import { StarInput } from '../../components/Stars/Stars.jsx'
-import { LIFE_STAGE, PREP_PERIOD } from '../../constants/enumLabels.js'
-import { HELPFUL_POINTS, policies } from '../../mocks/data.js'
+import { PREP_PERIOD } from '../../constants/enumLabels.js'
+import { HELPFUL_POINTS, policies, policyById } from '../../mocks/data.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { toIso, today } from '../../utils/date.js'
 import styles from './ReviewWriteModal.module.css'
@@ -22,7 +22,7 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
   const [form, setForm] = useState({
     policyId: sorted[0].policyId,
     rating: 5,
-    title: '',
+    oneLiner: '',
     prepPeriod: 'MONTH_1',
     helpfulPoints: [],
     content: '',
@@ -32,18 +32,22 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
 
   const submit = (e) => {
     e.preventDefault()
-    if (!form.title.trim()) return setError('한 줄 평을 입력해 주세요.')
-    if (CONTACT_PATTERN.test(form.title) || CONTACT_PATTERN.test(form.content)) {
+    if (!form.oneLiner.trim()) return setError('한 줄 평을 입력해 주세요.')
+    if (CONTACT_PATTERN.test(form.oneLiner) || CONTACT_PATTERN.test(form.content)) {
       return setError('연락처는 게시글에 쓸 수 없어요.')
     }
     // TODO(11주차): POST /posts
+    const { policyId, ...fields } = form
     onSubmit({
-      ...form,
+      ...fields,
       type: 'PROGRAM_REVIEW',
-      title: form.title.trim(),
-      jobCategory: profile.jobCategories[0] ?? 'ETC',
-      lifeStages: profile.lifeStages,
-      authorStage: profile.lifeStages.map((s) => LIFE_STAGE[s]).join(' · '),
+      oneLiner: form.oneLiner.trim(),
+      policy: { policyId, title: policyById(policyId).title },
+      job: null,
+      jobCategory: profile.jobPreference.jobCategories[0] ?? 'ETC',
+      authorStage: profile.lifeStages[0],
+      authorStageAfter: null,
+      liked: false,
       createdAt: toIso(today()),
     })
   }
@@ -73,10 +77,10 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
           <span className={styles.label}>한 줄 평</span>
           <input
             className={styles.input}
-            maxLength={40}
+            maxLength={60}
             placeholder="실무 과제로 지원할 직무가 선명해졌어요"
-            value={form.title}
-            onChange={(e) => set('title', e.target.value)}
+            value={form.oneLiner}
+            onChange={(e) => set('oneLiner', e.target.value)}
           />
         </label>
 

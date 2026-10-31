@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Check, ChevronDown, ChevronRight, ChevronUp, ExternalLink } from 'lucide-react'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
@@ -33,7 +33,9 @@ export default function Roadmap() {
 
   const stepDone = (step) => step.items.every((i) => statuses[i.itemId] === 'COMPLETED')
   const currentStep = roadmap.steps.find((s) => !stepDone(s))?.stepOrder ?? null
-  const [openSteps, setOpenSteps] = useState(() => new Set([currentStep]))
+  // 홈에서 단계를 눌러 들어오면 그 단계를 펼친다
+  const { state } = useLocation()
+  const [openSteps, setOpenSteps] = useState(() => new Set([state?.step ?? currentStep]))
   const toggleStep = (order) => setOpenSteps((prev) => toggled(prev, order))
 
   const summary = summarize(statuses)
@@ -54,7 +56,7 @@ export default function Roadmap() {
               {profile.lifeStages.map((s) => LIFE_STAGE[s]).join(' · ')}
             </span>
             <span className={styles.muted}>관심분야</span>
-            {profile.interestFields.map((f) => (
+            {profile.interests.map((f) => (
               <Tag key={f} tone="outline">{INTEREST_FIELD[f]}</Tag>
             ))}
           </div>
@@ -156,7 +158,13 @@ export default function Roadmap() {
         </aside>
       </div>
 
-      {modalOpen && <StatusChangeModal open onClose={() => setModalOpen(false)} />}
+      {modalOpen && (
+        <StatusChangeModal
+          open
+          onClose={() => setModalOpen(false)}
+          onRenewed={() => setOpenSteps(new Set([roadmap.steps[0].stepOrder]))}
+        />
+      )}
     </div>
   )
 }
@@ -167,13 +175,13 @@ function RoadmapItem({ item, status, onStatusChange }) {
     <Card as="article" className={styles.itemCard}>
       <div className={styles.itemTop}>
         <h3 className={styles.itemTitle}>{policy?.title ?? item.title}</h3>
-        {policy && <DdayTag date={policy.applyEnd} />}
+        {policy && <DdayTag date={policy.applyEndDate} />}
       </div>
       <div className={styles.itemSub}>
-        <span>{policy?.organization ?? item.organization}</span>
+        <span>{policy?.agency ?? item.agency}</span>
         {policy && (
           <span>
-            <span className={styles.muted}>접수</span> {formatRange(policy.applyStart, policy.applyEnd)}
+            <span className={styles.muted}>접수</span> {formatRange(policy.applyStartDate, policy.applyEndDate)}
           </span>
         )}
       </div>
@@ -190,7 +198,7 @@ function RoadmapItem({ item, status, onStatusChange }) {
       </div>
       {policy && (
         <p className={styles.source}>
-          마지막 정보 확인일 {formatDot(policy.lastCheckedAt)} · 출처 {policy.sourceName}
+          마지막 정보 확인일 {formatDot(policy.lastVerifiedAt)} · 출처 {policy.agency}
         </p>
       )}
     </Card>
@@ -199,7 +207,6 @@ function RoadmapItem({ item, status, onStatusChange }) {
 
 function NextActions() {
   const { statuses, setItemStatus, setNotificationOpen } = useAppState()
-  const items = roadmap.steps.flatMap((s) => s.items)
   return (
     <Card>
       <CardHeader
@@ -211,20 +218,18 @@ function NextActions() {
         }
       />
       <ul className={styles.todoList}>
-        {nextActions.map(({ itemId, label }) => {
-          const item = items.find((i) => i.itemId === itemId)
-          return (
-            <li key={itemId} className={styles.todo}>
-              <div className={styles.todoBody}>
-                <Link to={`/policies/${item.policyId}`} className={styles.todoTitle}>{label}</Link>
-                <StatusSelect value={statuses[itemId]} onChange={(s) => setItemStatus(itemId, s)} />
-              </div>
-              <Link to={`/policies/${item.policyId}`} aria-label={`${label} 상세`} className={styles.todoArrow}>
-                <ChevronRight size={18} />
-              </Link>
-            </li>
-          )
-        })}
+        {nextActions.map(({ itemId, policyId, title, actionLabel }) => (
+          <li key={itemId} className={styles.todo}>
+            <div className={styles.todoBody}>
+              <Link to={`/policies/${policyId}`} className={styles.todoTitle}>{title}</Link>
+              <span className={styles.muted}>{actionLabel}</span>
+              <StatusSelect value={statuses[itemId]} onChange={(s) => setItemStatus(itemId, s)} />
+            </div>
+            <Link to={`/policies/${policyId}`} aria-label={`${title} 상세`} className={styles.todoArrow}>
+              <ChevronRight size={18} />
+            </Link>
+          </li>
+        ))}
       </ul>
     </Card>
   )
@@ -233,7 +238,7 @@ function NextActions() {
 function UpcomingDeadlines() {
   const policyIds = roadmap.steps.flatMap((s) => s.items).map((i) => i.policyId).filter(Boolean)
   const list = [
-    ...policyIds.map(policyById).map((p) => ({ key: `p${p.policyId}`, name: p.title, date: p.applyEnd })),
+    ...policyIds.map(policyById).map((p) => ({ key: `p${p.policyId}`, name: p.title, date: p.applyEndDate })),
     ...jobs.map((j) => ({ key: `j${j.jobId}`, name: `${j.company.replace('(주)', '')} ${j.title}`, date: j.deadline })),
   ]
     .filter((d) => daysUntil(d.date) >= 0)

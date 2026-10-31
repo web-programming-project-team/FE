@@ -9,7 +9,7 @@ import { daysUntil, formatDot, today, toIso } from '../../utils/date.js'
 import styles from './AdminPolicies.module.css'
 
 const STALE_DAYS = 30
-const daysSinceCheck = (p) => -daysUntil(p.lastCheckedAt)
+const daysSinceCheck = (p) => -daysUntil(p.lastVerifiedAt)
 const isStale = (p) => p.recruitStatus !== 'ENDED' && daysSinceCheck(p) > STALE_DAYS
 
 const FILTERS = {
@@ -32,7 +32,7 @@ export default function AdminPolicies() {
     () =>
       list
         .filter(FILTERS[filter].test)
-        .filter((p) => !query || `${p.title} ${p.organization}`.includes(query.trim())),
+        .filter((p) => !query || `${p.title} ${p.agency}`.includes(query.trim())),
     [list, filter, query],
   )
   const staleCount = list.filter(isStale).length
@@ -43,11 +43,11 @@ export default function AdminPolicies() {
 
   // TODO(7주차): POST /admin/policies, PUT /admin/policies/{id}
   const savePolicy = (data) => {
-    const checked = { ...data, lastCheckedAt: toIso(today()) }
+    const checked = { ...data, lastVerifiedAt: toIso(today()) }
     setList((prev) =>
       data.policyId
         ? prev.map((p) => (p.policyId === data.policyId ? { ...p, ...checked } : p))
-        : [...prev, { ...checked, policyId: Date.now(), source: 'ADMIN', savedUserCount: 0 }],
+        : [...prev, { ...checked, policyId: Date.now(), source: 'ADMIN', roadmapItemCount: 0 }],
     )
     setEditing(null)
   }
@@ -116,16 +116,16 @@ export default function AdminPolicies() {
               {rows.map((p) => (
                 <tr key={p.policyId}>
                   <td className={styles.name}>{p.title}</td>
-                  <td className={styles.org}>{p.organization}</td>
+                  <td className={styles.org}>{p.agency}</td>
                   <td>{SOURCE[p.source]}</td>
                   <td>
                     <span className={`${styles.recruit} ${styles[p.recruitStatus]}`}>
                       {RECRUIT_STATUS[p.recruitStatus]}
                     </span>
                   </td>
-                  <td>{formatDot(p.applyEnd)}</td>
+                  <td>{formatDot(p.applyEndDate)}</td>
                   <td>
-                    {formatDot(p.lastCheckedAt)}
+                    {formatDot(p.lastVerifiedAt)}
                     {isStale(p) && (
                       <div className={styles.stale}>
                         <span className={styles.staleBadge}>
@@ -135,7 +135,7 @@ export default function AdminPolicies() {
                       </div>
                     )}
                   </td>
-                  <td className={`${styles.num} ${styles.count}`}>{p.savedUserCount}명</td>
+                  <td className={`${styles.num} ${styles.count}`}>{p.roadmapItemCount}명</td>
                   <td className={styles.center}>
                     <div className={styles.actions}>
                       <button type="button" className={styles.edit} onClick={() => setEditing(p)}>
