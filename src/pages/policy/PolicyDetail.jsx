@@ -22,21 +22,21 @@ export default function PolicyDetail() {
     return (
       <Card className={styles.empty}>
         <p>정책을 찾을 수 없습니다.</p>
-        <Button variant="outline" to="/">내 로드맵으로</Button>
+        <Button variant="outline" to="/roadmap">내 로드맵으로</Button>
       </Card>
     )
   }
 
-  const end = parseDate(policy.applyEnd)
+  const end = parseDate(policy.applyEndDate)
   const inCalendar = calendarPolicyIds.has(policy.policyId)
-  const relatedReviews = reviews.filter((r) => r.policyId === policy.policyId).slice(0, 3)
-  const relatedJobs = jobs.filter((j) => j.relatedPolicyIds.includes(policy.policyId)).slice(0, 2)
+  const relatedReviews = reviews.filter((r) => r.policy?.policyId === policy.policyId).slice(0, 3)
+  const relatedJobs = jobs.filter((j) => j.helpfulPolicies.some((p) => p.policyId === policy.policyId)).slice(0, 2)
 
   const info = [
     ['지원대상', policy.target],
     ['지원내용', policy.content],
-    ['접수기간', formatRange(policy.applyStart, policy.applyEnd)],
-    ['운영기관', policy.organization],
+    ['접수기간', formatRange(policy.applyStartDate, policy.applyEndDate)],
+    ['운영기관', policy.agency],
     ['문의처', policy.contact],
   ]
 
@@ -51,7 +51,7 @@ export default function PolicyDetail() {
           <Tag>{INTEREST_FIELD[policy.field]}</Tag>
           <h1 className={styles.title}>{policy.title}</h1>
         </div>
-        <p className={styles.org}>{policy.organization}</p>
+        <p className={styles.org}>{policy.agency}</p>
       </header>
 
       <div className={styles.columns}>
@@ -68,9 +68,9 @@ export default function PolicyDetail() {
             </dl>
             <div className={styles.sourceBox}>
               <p>
-                마지막 정보 확인일 {formatDot(policy.lastCheckedAt)} · 출처 {policy.sourceName}
+                마지막 정보 확인일 {formatDot(policy.lastVerifiedAt)} · 출처 {policy.agency}
               </p>
-              <a href={policy.applyUrl} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>
+              <a href={policy.sourceUrl} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>
                 공식 출처 확인 <ExternalLink size={14} aria-hidden="true" />
               </a>
             </div>
@@ -88,7 +88,7 @@ export default function PolicyDetail() {
                 {relatedReviews.map((r) => (
                   <Card as="article" key={r.postId} className={styles.review}>
                     <Stars value={r.rating} />
-                    <h3 className={styles.reviewTitle}>{r.title}</h3>
+                    <h3 className={styles.reviewTitle}>{r.oneLiner}</h3>
                     <p className={styles.reviewMeta}>
                       준비 기간 <b>{PREP_PERIOD[r.prepPeriod]}</b>
                     </p>
@@ -134,9 +134,9 @@ export default function PolicyDetail() {
 
           <div className={styles.dday}>
             <p className={styles.muted}>접수 마감까지</p>
-            <strong>{ddayLabel(daysUntil(policy.applyEnd))}</strong>
+            <strong>{ddayLabel(daysUntil(policy.applyEndDate))}</strong>
             <p>
-              <span className={styles.muted}>마감일</span> {formatDot(policy.applyEnd)}
+              <span className={styles.muted}>마감일</span> {formatDot(policy.applyEndDate)}
             </p>
           </div>
 

@@ -38,22 +38,24 @@ const PREVIEW = [
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { updateProfile } = useAppState()
+  const { updateProfile, updateJobPreference, resetRoadmap } = useAppState()
   const [step, setStep] = useState(0)
   const [lifeStages, setLifeStages] = useState([])
-  const [interestFields, setInterestFields] = useState([])
+  const [interests, setInterests] = useState([])
   const [jobCategories, setJobCategories] = useState([])
   const [regions, setRegions] = useState(['SIHEUNG'])
 
-  const count = [lifeStages.length, interestFields.length, jobCategories.length + regions.length][step]
+  const count = [lifeStages.length, interests.length, jobCategories.length + regions.length][step]
   const canNext = step === 2 ? jobCategories.length > 0 && regions.length > 0 : count > 0
   const current = STEPS[step]
 
   const onNext = () => {
     if (step < 2) return setStep(step + 1)
-    // TODO(6주차): PUT /users/me/status 로 저장 후 로드맵 생성
-    updateProfile({ lifeStages, interestFields, jobCategories, regions })
-    navigate('/')
+    // TODO(6주차): PUT /users/me/profile 로 저장 후 로드맵 생성
+    updateProfile({ lifeStages, interests })
+    updateJobPreference({ jobCategories, regions })
+    resetRoadmap()
+    navigate('/onboarding/done')
   }
 
   return (
@@ -84,7 +86,7 @@ export default function Onboarding() {
               <ChipGroup size="lg" options={LIFE_STAGE} values={lifeStages} onChange={setLifeStages} />
             )}
             {step === 1 && (
-              <ChipGroup size="lg" options={INTEREST_FIELD} values={interestFields} onChange={setInterestFields} />
+              <ChipGroup size="lg" options={INTEREST_FIELD} values={interests} onChange={setInterests} />
             )}
             {step === 2 && (
               <>
@@ -129,9 +131,7 @@ export default function Onboarding() {
         </p>
       </main>
 
-      <div className="container">
-        <Footer note="학교에서 사회로, 다음 걸음을 함께 설계해요" />
-      </div>
+      <Footer />
     </div>
   )
 }

@@ -28,7 +28,7 @@ export default function ReportModal({ post, onClose }) {
       onClose={onClose}
       width={440}
       title="후기 신고하기"
-      description={`"${post.title}"`}
+      description={`"${post.oneLiner}"`}
       footer={
         <>
           <Button variant="outline" size="lg" onClick={onClose}>취소</Button>

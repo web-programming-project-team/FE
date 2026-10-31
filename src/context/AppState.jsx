@@ -24,9 +24,13 @@ export function AppStateProvider({ children }) {
     return {
       profile,
       updateProfile: (patch) => setProfile((p) => ({ ...p, ...patch })),
+      updateJobPreference: (patch) =>
+        setProfile((p) => ({ ...p, jobPreference: { ...p.jobPreference, ...patch } })),
 
       statuses,
       setItemStatus: (itemId, status) => setStatuses((s) => ({ ...s, [itemId]: status })),
+      // 로드맵 생성 규칙: 새로 만든 로드맵의 항목은 모두 TO_CHECK로 시작한다 (API 명세 v1.4)
+      resetRoadmap: () => setStatuses(Object.fromEntries(allItems.map((i) => [i.itemId, 'TO_CHECK']))),
       policyStatus: (policyId) => {
         const item = itemOfPolicy(policyId)
         return item ? statuses[item.itemId] : 'TO_CHECK'

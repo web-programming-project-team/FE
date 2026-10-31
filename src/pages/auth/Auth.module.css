@@ -6,7 +6,7 @@
   padding: var(--space-10) var(--space-8);
   border-radius: var(--radius-card);
   background: var(--color-card);
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-line);
 }
 
 .brand {
@@ -74,7 +74,7 @@
 .switch a {
   margin-left: var(--space-1);
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 @media (max-width: 480px) {
