@@ -79,7 +79,7 @@
 }
 
 .listTitle span {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .listTitle small {
@@ -139,7 +139,7 @@
 .new {
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .jobTitle {
@@ -168,7 +168,7 @@
 }
 
 .saved {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   fill: var(--color-primary);
 }
 

@@ -107,3 +107,7 @@ export const NOTIFICATION_TYPE = {
   NEW_REVIEW: '관심 항목 새 후기',
   SYSTEM: '공지',
 }
+
+// 후기 작성자 상황 표시: 졸업 예정 → 첫 취업
+export const authorStageLabel = ({ authorStage, authorStageAfter }) =>
+  authorStageAfter ? `${LIFE_STAGE[authorStage]} → ${LIFE_STAGE[authorStageAfter]}` : LIFE_STAGE[authorStage]

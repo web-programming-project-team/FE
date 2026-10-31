@@ -63,7 +63,7 @@
 }
 
 .tabActive {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   font-weight: 600;
   border-bottom-color: var(--color-primary);
 }
@@ -258,7 +258,7 @@
 }
 
 .postPolicy a {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .postPolicy a:hover {

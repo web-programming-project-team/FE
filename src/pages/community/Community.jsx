@@ -8,8 +8,8 @@ import { Chip, Tag } from '../../components/Chip/Chip.jsx'
 import { Stars } from '../../components/Stars/Stars.jsx'
 import ReviewWriteModal from './ReviewWriteModal.jsx'
 import ReportModal from './ReportModal.jsx'
-import { JOB_CATEGORY, LIFE_STAGE, POST_TYPE, PREP_PERIOD } from '../../constants/enumLabels.js'
-import { policies, policyById, reviews as initialReviews } from '../../mocks/data.js'
+import { JOB_CATEGORY, LIFE_STAGE, POST_TYPE, PREP_PERIOD, authorStageLabel } from '../../constants/enumLabels.js'
+import { policies, reviews as initialReviews } from '../../mocks/data.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { formatDot } from '../../utils/date.js'
 import { toggled } from '../../utils/set.js'
@@ -36,9 +36,9 @@ export default function Community() {
     () =>
       posts
         .filter((p) => p.type === tab)
-        .filter((p) => policyFilter === 'ALL' || p.policyId === policyFilter)
+        .filter((p) => policyFilter === 'ALL' || p.policy?.policyId === policyFilter)
         .filter((p) => jobFilter === 'ALL' || p.jobCategory === jobFilter)
-        .filter((p) => !sameStageOnly || p.lifeStages.some((s) => profile.lifeStages.includes(s)))
+        .filter((p) => !sameStageOnly || [p.authorStage, p.authorStageAfter].some((s) => profile.lifeStages.includes(s)))
         .sort(SORTS[sort].compare),
     [posts, tab, policyFilter, jobFilter, sameStageOnly, sort, profile.lifeStages],
   )
@@ -178,7 +178,7 @@ export default function Community() {
 
 function PostCard({ post, liked, onLike, onReport }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const policy = policyById(post.policyId)
+  const { policy } = post
 
   return (
     <Card as="article" className={styles.post}>
@@ -203,7 +203,7 @@ function PostCard({ post, liked, onLike, onReport }) {
         </div>
       </div>
 
-      <h3 className={styles.postTitle}>{post.title}</h3>
+      <h3 className={styles.postTitle}>{post.oneLiner}</h3>
       <div className={styles.postTags}>
         <span className={styles.prep}>준비 {PREP_PERIOD[post.prepPeriod]}</span>
         {post.helpfulPoints.map((t) => (
@@ -217,7 +217,7 @@ function PostCard({ post, liked, onLike, onReport }) {
 
       <div className={styles.postFoot}>
         <div>
-          <p>익명 청년 · {post.authorStage}</p>
+          <p>익명 청년 · {authorStageLabel(post)}</p>
           <p className={styles.date}>{formatDot(post.createdAt)}</p>
         </div>
         <button

@@ -86,7 +86,7 @@
   font-size: var(--fs-4xl);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .rate small {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../../context/AppState.jsx'
+import { notificationPath, splitDday } from '../../utils/notification.js'
 import styles from './NotificationDropdown.module.css'
 
 const TABS = [
@@ -65,7 +66,9 @@ export default function NotificationDropdown({ onClose }) {
       </div>
       <ul className={styles.list}>
         {list.length === 0 && <li className={styles.empty}>새 알림이 없어요</li>}
-        {list.map((n) => (
+        {list.map((n) => {
+          const [text, dday] = splitDday(n.title)
+          return (
           <li key={n.notificationId}>
             <button
               type="button"
@@ -73,7 +76,7 @@ export default function NotificationDropdown({ onClose }) {
               onClick={() => {
                 markRead(n.notificationId)
                 onClose()
-                navigate(n.link)
+                navigate(notificationPath(n.link))
               }}
             >
               <span className={styles.dot} aria-hidden="true" />
@@ -81,13 +84,14 @@ export default function NotificationDropdown({ onClose }) {
                 {CATEGORY[n.type]}
               </span>
               <strong className={styles.itemTitle}>
-                {n.title}
-                {n.dday && <em className={styles.dday}>{n.dday}</em>}
+                {text}
+                {dday && <em className={styles.dday}>{dday}</em>}
               </strong>
               <span className={styles.body}>{n.body}</span>
             </button>
           </li>
-        ))}
+          )
+        })}
       </ul>
     </div>
   )

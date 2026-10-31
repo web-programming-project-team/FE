@@ -2,24 +2,29 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Logo from '../../components/Logo/Logo.jsx'
 import Button from '../../components/Button/Button.jsx'
+import { useAppState } from '../../context/AppState.jsx'
 import styles from './Auth.module.css'
 
 // 시안에 없는 화면 — 로그인 카드와 같은 형태로 구성
 export default function Signup() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '', passwordConfirm: '' })
+  const { updateProfile } = useAppState()
+  const [form, setForm] = useState({ email: '', nickname: '', password: '', passwordConfirm: '' })
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value })
   const mismatch = form.passwordConfirm !== '' && form.password !== form.passwordConfirm
 
   const onSubmit = (e) => {
     e.preventDefault()
-    if (mismatch) return
+    const nickname = form.nickname.trim()
+    if (mismatch || !nickname) return
     // TODO(6주차): POST /auth/signup
+    updateProfile({ nickname })
     navigate('/onboarding')
   }
 
   return (
     <form className={styles.card} onSubmit={onSubmit}>
+      <h1 className="sr-only">회원가입</h1>
       <div className={styles.brand}>
         <Logo variant="text" size="lg" />
         <p className={styles.tagline}>이메일로 가입하고 나만의 로드맵을 받아 보세요</p>
@@ -34,6 +39,18 @@ export default function Signup() {
           placeholder="이메일 주소를 입력해 주세요"
           value={form.email}
           onChange={set('email')}
+          required
+        />
+      </label>
+      <label className={styles.field}>
+        <span className={styles.label}>닉네임</span>
+        <input
+          className={styles.input}
+          autoComplete="nickname"
+          maxLength={12}
+          placeholder="홈에서 불러드릴 이름을 입력해 주세요"
+          value={form.nickname}
+          onChange={set('nickname')}
           required
         />
       </label>
