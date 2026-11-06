@@ -28,6 +28,12 @@
   color: var(--color-text-2);
 }
 
+.hint {
+  margin-left: var(--space-2);
+  font-weight: 400;
+  color: var(--color-text-3);
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

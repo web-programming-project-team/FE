@@ -29,7 +29,8 @@ const SORTS = {
 
 export default function Jobs() {
   const { profile, updateJobPreference } = useAppState()
-  const { regions, jobCategories, education } = profile.jobPreference
+  // 온보딩에서는 지역·직무만 받으므로 학력·고용형태는 비어 있을 수 있다(null·빈 목록)
+  const { regions, jobCategories, education, employmentTypes } = profile.jobPreference
   const [filterOpen, setFilterOpen] = useState(false)
   const [sort, setSort] = useState('deadline')
 
@@ -37,8 +38,9 @@ export default function Jobs() {
     () =>
       jobs
         .filter((j) => regions.includes(j.region) && jobCategories.includes(j.jobCategory))
+        .filter((j) => employmentTypes.length === 0 || employmentTypes.includes(j.employmentType))
         .sort(SORTS[sort].compare),
-    [regions, jobCategories, sort],
+    [regions, jobCategories, employmentTypes, sort],
   )
 
   const regionLabel =
@@ -46,6 +48,7 @@ export default function Jobs() {
       ? '시흥·인접지역'
       : regions.map((r) => REGION[r]).join('·')
   const categoryLabel = jobCategories.map((c) => JOB_CATEGORY[c].replace('·개발', '')).join('·')
+  const employmentLabel = employmentTypes.map((t) => EMPLOYMENT_TYPE[t]).join('·')
   const graduating = profile.lifeStages.includes('GRADUATING')
 
   return (
@@ -55,11 +58,13 @@ export default function Jobs() {
         <p className={styles.description}>내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요.</p>
         <div className={styles.conditions}>
           {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
-          <Tag tone="outline">{EDUCATION[education]}</Tag>
+          {education && <Tag tone="outline">{EDUCATION[education]}</Tag>}
           <Tag tone="outline">신입</Tag>
           {categoryLabel && <Tag tone="outline">{categoryLabel}</Tag>}
-          <Tag tone="outline">{EMPLOYMENT_TYPE.FULL_TIME}</Tag>
-          {graduating && <span className={styles.note}>대졸은 {LIFE_STAGE.GRADUATING} 포함</span>}
+          {employmentLabel && <Tag tone="outline">{employmentLabel}</Tag>}
+          {graduating && education === 'UNIVERSITY' && (
+            <span className={styles.note}>대졸은 {LIFE_STAGE.GRADUATING} 포함</span>
+          )}
         </div>
         <button
           type="button"
@@ -73,7 +78,10 @@ export default function Jobs() {
           <JobFilter
             regions={regions}
             jobCategories={jobCategories}
-            onChange={updateJobPreference}
+            education={education}
+            employmentTypes={employmentTypes}
+            // PATCH /users/me/job-preference (보낸 필드만 바뀜)
+            onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
           />
         )}
       </header>
