@@ -38,8 +38,9 @@ export default function Jobs() {
     () =>
       jobs
         .filter((j) => regions.includes(j.region) && jobCategories.includes(j.jobCategory))
+        .filter((j) => employmentTypes.length === 0 || employmentTypes.includes(j.employmentType))
         .sort(SORTS[sort].compare),
-    [regions, jobCategories, sort],
+    [regions, jobCategories, employmentTypes, sort],
   )
 
   const regionLabel =
