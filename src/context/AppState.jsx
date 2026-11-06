@@ -1,36 +1,85 @@
-import { createContext, useContext, useMemo, useState } from 'react'
-import { me as initialMe, notifications as initialNotifications, roadmap } from '../mocks/data.js'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { authApi, profileApi } from '../api/index.js'
+import { tokens } from '../api/client.js'
+import { notifications as initialNotifications, roadmap } from '../mocks/data.js'
 import { toggled } from '../utils/set.js'
 
-// 백엔드 연결 전까지 화면 사이에서 공유하는 상태.
-// API가 붙으면 각 setter 안에서 해당 API(PATCH /roadmap-items/{id}/status 등)를 호출하도록 바꾼다.
+// 화면 사이에서 공유하는 상태
+// - user: 로그인한 회원 정보 + 상태·관심분야·채용 조건 (GET /users/me, GET /users/me/profile)
+// - 맞춤 채용·커뮤니티·알림은 백엔드 구현 전이라 아래 예시 상태를 계속 쓴다
 const AppStateContext = createContext(null)
 
-const allItems = roadmap.steps.flatMap((s) => s.items)
+const mockItems = roadmap.steps.flatMap((s) => s.items)
+const EMPTY_PREFERENCE = { regions: [], education: null, careerLevel: null, jobCategories: [], employmentTypes: [] }
+
+async function fetchUser() {
+  const me = await authApi.me()
+  const profile = me.onboardingCompleted ? await profileApi.get() : null
+  return {
+    ...me,
+    lifeStages: profile?.lifeStages ?? [],
+    interests: profile?.interests ?? [],
+    jobPreference: profile?.jobPreference ?? EMPTY_PREFERENCE,
+  }
+}
 
 export function AppStateProvider({ children }) {
-  const [profile, setProfile] = useState(initialMe)
-  const [statuses, setStatuses] = useState(() =>
-    Object.fromEntries(allItems.map((i) => [i.itemId, i.status])),
-  )
+  // undefined: 확인 중 · null: 비로그인 · 객체: 로그인
+  const [user, setUser] = useState(() => (tokens.access() ? undefined : null))
+
+  const reloadUser = useCallback(async () => {
+    if (!tokens.access()) {
+      setUser(null)
+      return null
+    }
+    try {
+      const next = await fetchUser()
+      setUser(next)
+      return next
+    } catch {
+      setUser(null)
+      return null
+    }
+  }, [])
+
+  // 새로고침해도 저장된 토큰으로 로그인 상태를 되살린다
+  useEffect(() => {
+    if (!tokens.access()) return
+    fetchUser()
+      .then(setUser)
+      .catch(() => setUser(null))
+  }, [])
+
+  // ── 예시 데이터 상태 (맞춤 채용·커뮤니티·알림 화면용) ──
+  const [statuses, setStatuses] = useState(() => Object.fromEntries(mockItems.map((i) => [i.itemId, i.status])))
   const [savedJobIds, setSavedJobIds] = useState(() => new Set())
-  const [calendarPolicyIds, setCalendarPolicyIds] = useState(() => new Set())
   const [notifications, setNotifications] = useState(initialNotifications)
   const [notificationOpen, setNotificationOpen] = useState(false)
 
   const value = useMemo(() => {
-    const itemOfPolicy = (policyId) => allItems.find((i) => i.policyId === Number(policyId))
+    const itemOfPolicy = (policyId) => mockItems.find((i) => i.policyId === Number(policyId))
 
     return {
-      profile,
-      updateProfile: (patch) => setProfile((p) => ({ ...p, ...patch })),
-      updateJobPreference: (patch) =>
-        setProfile((p) => ({ ...p, jobPreference: { ...p.jobPreference, ...patch } })),
+      user,
+      reloadUser,
+      login: async (email, password) => {
+        await authApi.login({ email, password })
+        return reloadUser()
+      },
+      logout: async () => {
+        await authApi.logout().catch(() => {})
+        setUser(null)
+      },
 
-      statuses,
-      setItemStatus: (itemId, status) => setStatuses((s) => ({ ...s, [itemId]: status })),
-      // 로드맵 생성 규칙: 새로 만든 로드맵의 항목은 모두 TO_CHECK로 시작한다 (API 명세 v1.4)
-      resetRoadmap: () => setStatuses(Object.fromEntries(allItems.map((i) => [i.itemId, 'TO_CHECK']))),
+      // 기존 화면 호환: profile = 로그인 회원 정보
+      profile: user ?? { nickname: '', lifeStages: [], interests: [], jobPreference: EMPTY_PREFERENCE },
+      // 채용 조건 수정 (PATCH /users/me/job-preference, 보낸 필드만 바뀜)
+      updateJobPreference: async (patch) => {
+        const jobPreference = await profileApi.updateJobPreference(patch)
+        setUser((u) => (u ? { ...u, jobPreference } : u))
+      },
+
+      // 맞춤 채용·후기 화면의 예시 진행상태 (해당 화면이 API로 바뀌면 지운다)
       policyStatus: (policyId) => {
         const item = itemOfPolicy(policyId)
         return item ? statuses[item.itemId] : 'TO_CHECK'
@@ -43,10 +92,6 @@ export function AppStateProvider({ children }) {
       savedJobIds,
       toggleSavedJob: (jobId) => setSavedJobIds((prev) => toggled(prev, jobId)),
 
-      calendarPolicyIds,
-      addPolicyToCalendar: (policyId) =>
-        setCalendarPolicyIds((prev) => new Set(prev).add(Number(policyId))),
-
       notifications,
       unreadCount: notifications.filter((n) => !n.read).length,
       markRead: (id) =>
@@ -55,7 +100,7 @@ export function AppStateProvider({ children }) {
       notificationOpen,
       setNotificationOpen,
     }
-  }, [profile, statuses, savedJobIds, calendarPolicyIds, notifications, notificationOpen])
+  }, [user, reloadUser, statuses, savedJobIds, notifications, notificationOpen])
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }

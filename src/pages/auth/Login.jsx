@@ -1,18 +1,34 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Logo from '../../components/Logo/Logo.jsx'
 import Button from '../../components/Button/Button.jsx'
+import { useAppState } from '../../context/AppState.jsx'
 import styles from './Auth.module.css'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const { login } = useAppState()
   const [form, setForm] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value })
 
-  const onSubmit = (e) => {
+  // POST /auth/login → 토큰 저장 → 관리자는 관리자 화면, 상태 등록 전이면 온보딩
+  const onSubmit = async (e) => {
     e.preventDefault()
-    // TODO(6주차): POST /auth/login → accessToken 저장
-    navigate('/')
+    setError('')
+    setSubmitting(true)
+    try {
+      const user = await login(form.email.trim(), form.password)
+      if (user?.role === 'ADMIN') navigate('/admin/policies')
+      else if (!user?.onboardingCompleted) navigate('/onboarding')
+      else navigate(state?.from ?? '/')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -50,10 +66,11 @@ export default function Login() {
           onChange={set('password')}
           required
         />
+        {error && <span className={styles.error} role="alert">{error}</span>}
       </label>
 
-      <Button type="submit" size="lg" block className={styles.submit}>
-        로그인
+      <Button type="submit" size="lg" block className={styles.submit} disabled={submitting}>
+        {submitting ? '로그인 중…' : '로그인'}
       </Button>
 
       <p className={styles.switch}>

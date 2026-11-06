@@ -5,14 +5,17 @@ import Button from '../../components/Button/Button.jsx'
 import Card from '../../components/Card/Card.jsx'
 import { Tag } from '../../components/Chip/Chip.jsx'
 import { INTEREST_FIELD, LIFE_STAGE } from '../../constants/enumLabels.js'
-import { roadmap } from '../../mocks/data.js'
+import { roadmapApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
 import { useAppState } from '../../context/AppState.jsx'
 import styles from './OnboardingDone.module.css'
 
-const itemCount = roadmap.steps.reduce((n, s) => n + s.items.length, 0)
-
 export default function OnboardingDone() {
   const { profile } = useAppState()
+  // 방금 만든 로드맵 (GET /roadmaps/me)
+  const { data: roadmap } = useApi(() => roadmapApi.mine(), [])
+  const steps = roadmap?.steps ?? []
+  const itemCount = steps.reduce((n, s) => n + s.items.length, 0)
 
   return (
     <div className={styles.page}>
@@ -69,13 +72,13 @@ export default function OnboardingDone() {
           </div>
 
           <div className={styles.roadmapHead}>
-            <h3 className={styles.roadmapTitle}>앞으로 살펴볼 로드맵</h3>
+            <h3 className={styles.roadmapTitle}>{roadmap?.templateName ?? '앞으로 살펴볼 로드맵'}</h3>
             <span className={styles.count}>
-              {roadmap.steps.length}단계 · {itemCount}개 항목
+              {steps.length}단계 · {itemCount}개 항목
             </span>
           </div>
           <ol className={styles.steps}>
-            {roadmap.steps.map((step) => (
+            {steps.map((step) => (
               <li key={step.stepOrder}>
                 <span className={styles.order}>{step.stepOrder}</span>
                 {step.title}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Bell, ChevronDown, UserRound } from 'lucide-react'
 import Logo from '../Logo/Logo.jsx'
 import NotificationDropdown from '../NotificationDropdown/NotificationDropdown.jsx'
@@ -50,8 +50,9 @@ export default function Header() {
 }
 
 function UserMenu() {
-  const { profile } = useAppState()
+  const { profile, logout } = useAppState()
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -85,8 +86,22 @@ function UserMenu() {
       {open && (
         <div className={styles.userMenu} role="menu">
           <Link role="menuitem" to="/settings" onClick={() => setOpen(false)}>맞춤 설정 변경</Link>
-          {/* TODO(6주차): POST /auth/logout */}
-          <Link role="menuitem" to="/login" onClick={() => setOpen(false)}>로그아웃</Link>
+          <Link role="menuitem" to="/me" onClick={() => setOpen(false)}>내 기록</Link>
+          {profile.role === 'ADMIN' && (
+            <Link role="menuitem" to="/admin/policies" onClick={() => setOpen(false)}>관리자 화면</Link>
+          )}
+          <Link
+            role="menuitem"
+            to="/login"
+            onClick={async (e) => {
+              e.preventDefault()
+              setOpen(false)
+              await logout()
+              navigate('/login')
+            }}
+          >
+            로그아웃
+          </Link>
         </div>
       )}
     </div>

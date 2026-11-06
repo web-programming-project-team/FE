@@ -1,16 +1,19 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Database, FileText, Flag, Route } from 'lucide-react'
 import Logo from '../components/Logo/Logo.jsx'
+import { useAppState } from '../context/AppState.jsx'
 import styles from './AdminLayout.module.css'
 
 const MENUS = [
   { to: '/admin/policies', label: '정책 관리', icon: FileText },
   { to: '/admin/templates', label: '로드맵 템플릿', icon: Route },
   { to: '/admin/reports', label: '신고 관리', icon: Flag },
-  { to: '/admin/collect', label: '데이터 수집', icon: Database },
+  { to: '/admin/collect', label: '수집·운영 지표', icon: Database },
 ]
 
 export default function AdminLayout() {
+  const { profile, logout } = useAppState()
+  const navigate = useNavigate()
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
@@ -32,7 +35,17 @@ export default function AdminLayout() {
         </nav>
         <div className={styles.foot}>
           <p className={styles.footStrong}>NEXT 시흥 · NextStep</p>
-          <p>정책 운영 관리</p>
+          <p>{profile.nickname} 관리자</p>
+          <button
+            type="button"
+            className={styles.link}
+            onClick={async () => {
+              await logout()
+              navigate('/login')
+            }}
+          >
+            로그아웃
+          </button>
         </div>
       </aside>
       <main className={styles.main}>

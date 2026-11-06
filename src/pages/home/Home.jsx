@@ -4,7 +4,9 @@ import Button from '../../components/Button/Button.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import { Tag } from '../../components/Chip/Chip.jsx'
 import { INTEREST_FIELD, LIFE_STAGE } from '../../constants/enumLabels.js'
-import { policyById, roadmap } from '../../mocks/data.js'
+import AsyncState from '../../components/AsyncState/AsyncState.jsx'
+import { roadmapApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
 import { useAppState } from '../../context/AppState.jsx'
 import styles from './Home.module.css'
 
@@ -18,22 +20,24 @@ const INTEREST_CARD = {
   CULTURE_LIFE: { title: '일상을 챙기는 지원', body: '문화·생활 지원 프로그램 확인' },
 }
 
-const itemTitle = (item) => (item.policyId ? policyById(item.policyId).title : item.title)
-
-function stepState(step, statuses) {
-  const values = step.items.map((i) => statuses[i.itemId])
-  if (values.every((s) => s === 'COMPLETED')) return '완료'
-  if (values.every((s) => s === 'TO_CHECK')) return '시작 전'
+// 단계 상태: 서버의 completed 값 + 항목 진행상태
+function stepState(step) {
+  if (step.completed) return '완료'
+  if (step.items.length === 0 || step.items.every((i) => i.status === 'TO_CHECK')) return '시작 전'
   return '진행 중'
 }
 
 export default function Home() {
-  const { profile, statuses } = useAppState()
+  const { profile } = useAppState()
+  // 내 로드맵 (GET /roadmaps/me)
+  const { data: roadmap, loading, error, reload } = useApi(() => roadmapApi.mine(), [])
 
-  const values = Object.values(statuses)
-  const completed = values.filter((s) => s === 'COMPLETED').length
+  if (!roadmap) return <AsyncState loading={loading} error={error} onRetry={reload} />
+
+  const total = roadmap.steps.reduce((n, s) => n + s.items.length, 0)
+  const completed = roadmap.progress.completed
   const stage = profile.lifeStages.map((s) => LIFE_STAGE[s]).join(' · ')
-  const current = roadmap.steps.find((s) => stepState(s, statuses) !== '완료')
+  const current = roadmap.steps.find((s) => s.stepOrder === roadmap.currentStep)
 
   return (
     <div className={styles.page}>
@@ -61,8 +65,8 @@ export default function Home() {
             }
           />
           <div className={styles.progressHead}>
-            <span>{roadmap.steps.length}단계 · 총 {values.length}개 항목</span>
-            <span><b>{completed}</b> / {values.length}개 완료</span>
+            <span>{roadmap.steps.length}단계 · 총 {total}개 항목</span>
+            <span><b>{completed}</b> / {total}개 완료</span>
           </div>
           <div
             className={styles.bar}
@@ -70,9 +74,9 @@ export default function Home() {
             aria-label="완료한 항목"
             aria-valuenow={completed}
             aria-valuemin={0}
-            aria-valuemax={values.length}
+            aria-valuemax={total}
           >
-            <div className={styles.barFill} style={{ width: `${(completed / values.length) * 100}%` }} />
+            <div className={styles.barFill} style={{ width: `${roadmap.progress.rate}%` }} />
           </div>
 
           <ol className={styles.steps}>
@@ -85,7 +89,9 @@ export default function Home() {
                       {completed === 0 ? '여기서 시작해 보세요' : '지금 살펴볼 단계예요'}
                     </p>
                     <h3 className={styles.currentTitle}>{step.title}</h3>
-                    <p className={styles.currentBody}>{step.items.map(itemTitle).join(' · ')}</p>
+                    <p className={styles.currentBody}>
+                      {step.items.length > 0 ? step.items.map((i) => i.title).join(' · ') : '아직 담긴 지원이 없어요'}
+                    </p>
                     <Button to="/roadmap" state={{ step: step.stepOrder }} className={styles.cta}>
                       {step.title} 살펴보기 <ArrowRight size={16} aria-hidden="true" />
                     </Button>
@@ -95,14 +101,14 @@ export default function Home() {
                 <li key={step.stepOrder}>
                   <Link to="/roadmap" state={{ step: step.stepOrder }} className={styles.row}>
                     <span className={styles.order}>
-                      {stepState(step, statuses) === '완료' ? (
+                      {stepState(step) === '완료' ? (
                         <Check size={14} strokeWidth={2.5} aria-label="완료" />
                       ) : (
                         step.stepOrder
                       )}
                     </span>
                     <span className={styles.rowTitle}>{step.title}</span>
-                    <span className={styles.rowState}>{stepState(step, statuses)}</span>
+                    <span className={styles.rowState}>{stepState(step)}</span>
                     <ChevronRight size={16} aria-hidden="true" />
                   </Link>
                 </li>
