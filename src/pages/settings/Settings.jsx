@@ -4,13 +4,13 @@ import { Check, ChevronRight } from 'lucide-react'
 import Button from '../../components/Button/Button.jsx'
 import Card from '../../components/Card/Card.jsx'
 import { ChipGroup } from '../../components/Chip/Chip.jsx'
-import { INTEREST_FIELD, LIFE_STAGE, REGION } from '../../constants/enumLabels.js'
+import { EDUCATION, EMPLOYMENT_TYPE, INTEREST_FIELD, JOB_CATEGORY, LIFE_STAGE, REGION } from '../../constants/enumLabels.js'
 import { profileApi } from '../../api/index.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { sameValues } from '../../utils/set.js'
 import styles from './Settings.module.css'
 
-const labels = (values, map) => values.map((v) => map[v]).join(' · ')
+const labels = (values, map) => (values.length ? values.map((v) => map[v]).join(' · ') : '-')
 
 export default function Settings() {
   const navigate = useNavigate()
@@ -19,23 +19,35 @@ export default function Settings() {
   const [error, setError] = useState('')
   const [lifeStages, setLifeStages] = useState(profile.lifeStages)
   const [interests, setInterests] = useState(profile.interests)
-  const [regions, setRegions] = useState(profile.jobPreference.regions)
+  const pref = profile.jobPreference
+  const [regions, setRegions] = useState(pref.regions)
+  const [jobCategories, setJobCategories] = useState(pref.jobCategories)
+  // 학력은 하나만. 온보딩에서 묻지 않아 비어 있을 수 있다
+  const [education, setEducation] = useState(pref.education ? [pref.education] : [])
+  const [employmentTypes, setEmploymentTypes] = useState(pref.employmentTypes)
 
-  const valid = lifeStages.length > 0 && interests.length > 0 && regions.length > 0
+  const valid = lifeStages.length > 0 && interests.length > 0 && regions.length > 0 && jobCategories.length > 0
   // 상황·관심분야가 바뀌면 새 로드맵을 만든다 (POST /users/me/life-stage-change)
   const needsNewRoadmap =
     !sameValues(lifeStages, profile.lifeStages) || !sameValues(interests, profile.interests)
 
-  const regionsChanged = !sameValues(regions, profile.jobPreference.regions)
+  // 채용 조건은 바뀐 필드만 보낸다 (PATCH /users/me/job-preference)
+  const preferencePatch = {
+    ...(!sameValues(regions, pref.regions) && { regions }),
+    ...(!sameValues(jobCategories, pref.jobCategories) && { jobCategories }),
+    ...(education[0] && education[0] !== pref.education && { education: education[0] }),
+    ...(!sameValues(employmentTypes, pref.employmentTypes) && { employmentTypes }),
+  }
+  const preferenceChanged = Object.keys(preferencePatch).length > 0
 
-  // 상황·관심분야가 바뀌면 POST /users/me/life-stage-change(새 로드맵), 지역만 바뀌면 PATCH /users/me/job-preference
+  // 상황·관심분야가 바뀌면 POST /users/me/life-stage-change(새 로드맵), 채용 조건만 바뀌면 PATCH /users/me/job-preference
   const onSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
     setError('')
     try {
       if (needsNewRoadmap) await profileApi.changeLifeStage({ lifeStages, interests })
-      if (regionsChanged) await profileApi.updateJobPreference({ regions })
+      if (preferenceChanged) await profileApi.updateJobPreference(preferencePatch)
       await reloadUser()
       navigate('/')
     } catch (err) {
@@ -85,6 +97,24 @@ export default function Settings() {
             <ChipGroup options={REGION} values={regions} onChange={setRegions} />
           </section>
 
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>희망 직무</h2>
+            <p className={styles.sectionHint}>여러 개 고를 수 있어요.</p>
+            <ChipGroup options={JOB_CATEGORY} values={jobCategories} onChange={setJobCategories} />
+          </section>
+
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>학력</h2>
+            <p className={styles.sectionHint}>하나만 골라 주세요. 대졸은 졸업 예정을 포함해요.</p>
+            <ChipGroup options={EDUCATION} values={education} onChange={setEducation} multiple={false} />
+          </section>
+
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>고용형태</h2>
+            <p className={styles.sectionHint}>원하는 고용형태를 모두 골라 주세요. 고르지 않으면 모두 보여드려요.</p>
+            <ChipGroup options={EMPLOYMENT_TYPE} values={employmentTypes} onChange={setEmploymentTypes} />
+          </section>
+
           <div className={styles.foot}>
             <p className={styles.hint}>
               {needsNewRoadmap
@@ -98,7 +128,7 @@ export default function Settings() {
             )}
             <div className={styles.actions}>
               <Button variant="outline" to="/">취소</Button>
-              <Button type="submit" disabled={!valid || submitting || (!needsNewRoadmap && !regionsChanged)}>
+              <Button type="submit" disabled={!valid || submitting || (!needsNewRoadmap && !preferenceChanged)}>
                 변경사항 저장
               </Button>
             </div>
@@ -113,7 +143,10 @@ export default function Settings() {
               <div><dt>닉네임</dt><dd>{profile.nickname}</dd></div>
               <div><dt>현재 상황</dt><dd>{labels(profile.lifeStages, LIFE_STAGE)}</dd></div>
               <div><dt>관심분야</dt><dd>{labels(profile.interests, INTEREST_FIELD)}</dd></div>
-              <div><dt>희망 지역</dt><dd>{labels(profile.jobPreference.regions, REGION)}</dd></div>
+              <div><dt>희망 지역</dt><dd>{labels(pref.regions, REGION)}</dd></div>
+              <div><dt>희망 직무</dt><dd>{labels(pref.jobCategories, JOB_CATEGORY)}</dd></div>
+              <div><dt>학력</dt><dd>{pref.education ? EDUCATION[pref.education] : '-'}</dd></div>
+              <div><dt>고용형태</dt><dd>{labels(pref.employmentTypes, EMPLOYMENT_TYPE)}</dd></div>
             </dl>
           </Card>
           <div className={styles.guide}>
