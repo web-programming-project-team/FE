@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Modal from '../../components/Modal/Modal.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Select from '../../components/Select/Select.jsx'
 import { INTEREST_FIELD } from '../../constants/enumLabels.js'
 import styles from './PolicyFormModal.module.css'
 
@@ -51,14 +52,16 @@ export default function PolicyFormModal({ policy, onClose, onSave }) {
           <span>운영기관</span>
           <input className={styles.input} value={form.agency} onChange={set('agency')} required />
         </label>
-        <label className={styles.field}>
+        <div className={styles.field}>
           <span>분야</span>
-          <select className={styles.input} value={form.field} onChange={set('field')}>
-            {Object.entries(INTEREST_FIELD).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
-            ))}
-          </select>
-        </label>
+          <Select
+            label="분야"
+            className={styles.input}
+            value={form.field}
+            onChange={(v) => setForm((f) => ({ ...f, field: v }))}
+            options={Object.entries(INTEREST_FIELD)}
+          />
+        </div>
         <label className={styles.field}>
           <span>접수 시작</span>
           <input className={styles.input} type="date" value={form.applyStartDate} onChange={set('applyStartDate')} />

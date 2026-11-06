@@ -5,6 +5,7 @@ import Logo from '../Logo/Logo.jsx'
 import NotificationDropdown from '../NotificationDropdown/NotificationDropdown.jsx'
 import { useAppState } from '../../context/AppState.jsx'
 import styles from './Header.module.css'
+import Slide from '../Slide/Slide.jsx'
 
 // 메뉴는 4개로 고정 (제안서 5-5). 홈은 로고로 이동한다.
 const MENUS = [
@@ -42,7 +43,7 @@ export default function Header() {
           <Bell size={20} />
           {unreadCount > 0 && <span className={styles.dot}>{unreadCount}</span>}
         </button>
-        {notificationOpen && <NotificationDropdown onClose={() => setNotificationOpen(false)} />}
+        <Slide as={NotificationDropdown} open={notificationOpen} onClose={() => setNotificationOpen(false)} />
         <UserMenu />
       </div>
     </header>
@@ -83,27 +84,25 @@ function UserMenu() {
         <span className={styles.userName}>{profile.nickname}님</span>
         <ChevronDown size={16} aria-hidden="true" />
       </button>
-      {open && (
-        <div className={styles.userMenu} role="menu">
-          <Link role="menuitem" to="/settings" onClick={() => setOpen(false)}>맞춤 설정 변경</Link>
-          <Link role="menuitem" to="/me" onClick={() => setOpen(false)}>내 기록</Link>
-          {profile.role === 'ADMIN' && (
-            <Link role="menuitem" to="/admin/policies" onClick={() => setOpen(false)}>관리자 화면</Link>
-          )}
-          <Link
-            role="menuitem"
-            to="/login"
-            onClick={async (e) => {
-              e.preventDefault()
-              setOpen(false)
-              await logout()
-              navigate('/login')
-            }}
-          >
-            로그아웃
-          </Link>
-        </div>
-      )}
+      <Slide open={open} className={styles.userMenu} role="menu">
+        <Link role="menuitem" to="/settings" onClick={() => setOpen(false)}>맞춤 설정 변경</Link>
+        <Link role="menuitem" to="/me" onClick={() => setOpen(false)}>내 기록</Link>
+        {profile.role === 'ADMIN' && (
+          <Link role="menuitem" to="/admin/policies" onClick={() => setOpen(false)}>관리자 화면</Link>
+        )}
+        <Link
+          role="menuitem"
+          to="/login"
+          onClick={async (e) => {
+            e.preventDefault()
+            setOpen(false)
+            await logout()
+            navigate('/login')
+          }}
+        >
+          로그아웃
+        </Link>
+      </Slide>
     </div>
   )
 }

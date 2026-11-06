@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Bookmark, ChevronDown, ChevronRight, ChevronUp, ExternalLink } from 'lucide-react'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Slide from '../../components/Slide/Slide.jsx'
+import Select from '../../components/Select/Select.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
 import { Tag } from '../../components/Chip/Chip.jsx'
@@ -74,7 +76,7 @@ export default function Jobs() {
         >
           조건 수정 {filterOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
-        {filterOpen && (
+        <Slide open={filterOpen}>
           <JobFilter
             regions={regions}
             jobCategories={jobCategories}
@@ -83,7 +85,7 @@ export default function Jobs() {
             // PATCH /users/me/job-preference (보낸 필드만 바뀜)
             onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
           />
-        )}
+        </Slide>
       </header>
 
       <div className={styles.columns}>
@@ -93,14 +95,12 @@ export default function Jobs() {
               맞춤 공고 <span>{list.length}</span>
               <small>사람인·관리자 등록 공고 기준</small>
             </h2>
-            <label>
-              <span className="sr-only">정렬</span>
-              <select className={styles.sort} value={sort} onChange={(e) => setSort(e.target.value)}>
-                {Object.entries(SORTS).map(([key, s]) => (
-                  <option key={key} value={key}>{s.label}</option>
-                ))}
-              </select>
-            </label>
+            <Select
+              label="정렬"
+              value={sort}
+              onChange={setSort}
+              options={Object.entries(SORTS).map(([key, s]) => [key, s.label])}
+            />
           </div>
           <p className={styles.listNote}>공고 확인과 입사 지원은 공식 사이트에서 진행돼요.</p>
 

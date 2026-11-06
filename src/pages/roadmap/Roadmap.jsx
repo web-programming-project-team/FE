@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Check, ChevronDown, ChevronRight, ChevronUp, ExternalLink } from 'lucide-react'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
+import Slide from '../../components/Slide/Slide.jsx'
 import Button from '../../components/Button/Button.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
@@ -141,18 +142,16 @@ export default function Roadmap() {
                     </span>
                   </button>
 
-                  {open && (
-                    <div className={styles.items}>
-                      {step.items.length === 0 && <p className={styles.muted}>아직 담긴 지원이 없어요.</p>}
-                      {step.items.map((item) => (
-                        <RoadmapItem
-                          key={item.itemId}
-                          item={item}
-                          onStatusChange={(s) => changeStatus(item.itemId, s)}
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <Slide open={open} className={styles.items}>
+                    {step.items.length === 0 && <p className={styles.muted}>아직 담긴 지원이 없어요.</p>}
+                    {step.items.map((item) => (
+                      <RoadmapItem
+                        key={item.itemId}
+                        item={item}
+                        onStatusChange={(s) => changeStatus(item.itemId, s)}
+                      />
+                    ))}
+                  </Slide>
                 </li>
               )
             })}

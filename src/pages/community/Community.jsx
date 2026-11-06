@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Ellipsis, Heart, Pencil } from 'lucide-react'
 import Card from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Select from '../../components/Select/Select.jsx'
 import Toggle from '../../components/Toggle/Toggle.jsx'
 import { Chip, Tag } from '../../components/Chip/Chip.jsx'
 import { Stars } from '../../components/Stars/Stars.jsx'
@@ -139,14 +140,16 @@ export default function Community() {
             <h2 id="post-list-title" className={styles.count}>
               {POST_TYPE[tab]} <b>{list.length}</b>개
             </h2>
-            <label className={styles.sortLabel}>
-              정렬
-              <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                {Object.entries(SORTS).map(([key, s]) => (
-                  <option key={key} value={key}>{s.label}</option>
-                ))}
-              </select>
-            </label>
+            <div className={styles.sortLabel}>
+              <span aria-hidden="true">정렬</span>
+              <Select
+                label="정렬"
+                className={styles.sortSelect}
+                value={sort}
+                onChange={setSort}
+                options={Object.entries(SORTS).map(([key, s]) => [key, s.label])}
+              />
+            </div>
           </div>
 
           {list.length === 0 ? (

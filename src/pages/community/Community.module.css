@@ -160,12 +160,14 @@
   color: var(--color-text-3);
 }
 
-.sortLabel select {
-  border: 0;
+.sortLabel .sortSelect {
+  min-width: 0;
+  height: 32px;
+  padding-inline: var(--space-2);
+  border-color: transparent;
   background: transparent;
   font-weight: 600;
   color: var(--color-text);
-  cursor: pointer;
 }
 
 .grid {

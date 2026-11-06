@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Check } from 'lucide-react'
 import { PROGRESS_STATUS } from '../../constants/enumLabels.js'
 import styles from './StatusSelect.module.css'
+import Slide from '../Slide/Slide.jsx'
 
 const CLASS = {
   TO_CHECK: styles.toCheck,
@@ -46,28 +47,26 @@ export default function StatusSelect({ value, onChange }) {
         {PROGRESS_STATUS[value]}
         <span className={styles.caret} aria-hidden="true" />
       </button>
-      {open && (
-        <ul className={styles.menu} role="listbox" aria-label="진행상태">
-          {Object.entries(PROGRESS_STATUS).map(([key, label]) => (
-            <li key={key}>
-              <button
-                type="button"
-                role="option"
-                aria-selected={key === value}
-                className={styles.option}
-                onClick={() => {
-                  onChange(key)
-                  setOpen(false)
-                }}
-              >
-                <span className={`${styles.swatch} ${CLASS[key]}`} aria-hidden="true" />
-                {label}
-                {key === value && <Check size={14} className={styles.check} aria-hidden="true" />}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Slide as="ul" open={open} className={styles.menu} role="listbox" aria-label="진행상태">
+        {Object.entries(PROGRESS_STATUS).map(([key, label]) => (
+          <li key={key}>
+            <button
+              type="button"
+              role="option"
+              aria-selected={key === value}
+              className={styles.option}
+              onClick={() => {
+                onChange(key)
+                setOpen(false)
+              }}
+            >
+              <span className={`${styles.swatch} ${CLASS[key]}`} aria-hidden="true" />
+              {label}
+              {key === value && <Check size={14} className={styles.check} aria-hidden="true" />}
+            </button>
+          </li>
+        ))}
+      </Slide>
     </div>
   )
 }
