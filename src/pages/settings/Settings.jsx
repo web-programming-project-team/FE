@@ -5,6 +5,7 @@ import Button from '../../components/Button/Button.jsx'
 import Card from '../../components/Card/Card.jsx'
 import { ChipGroup } from '../../components/Chip/Chip.jsx'
 import { INTEREST_FIELD, LIFE_STAGE, REGION } from '../../constants/enumLabels.js'
+import { profileApi } from '../../api/index.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { sameValues } from '../../utils/set.js'
 import styles from './Settings.module.css'
@@ -13,7 +14,9 @@ const labels = (values, map) => values.map((v) => map[v]).join(' · ')
 
 export default function Settings() {
   const navigate = useNavigate()
-  const { profile, updateProfile, updateJobPreference, resetRoadmap } = useAppState()
+  const { profile, reloadUser } = useAppState()
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
   const [lifeStages, setLifeStages] = useState(profile.lifeStages)
   const [interests, setInterests] = useState(profile.interests)
   const [regions, setRegions] = useState(profile.jobPreference.regions)
@@ -23,13 +26,22 @@ export default function Settings() {
   const needsNewRoadmap =
     !sameValues(lifeStages, profile.lifeStages) || !sameValues(interests, profile.interests)
 
-  const onSubmit = (e) => {
+  const regionsChanged = !sameValues(regions, profile.jobPreference.regions)
+
+  // 상황·관심분야가 바뀌면 POST /users/me/life-stage-change(새 로드맵), 지역만 바뀌면 PATCH /users/me/job-preference
+  const onSubmit = async (e) => {
     e.preventDefault()
-    // TODO(9주차): POST /users/me/life-stage-change, PATCH /users/me/job-preference 연결
-    updateProfile({ lifeStages, interests })
-    updateJobPreference({ regions })
-    if (needsNewRoadmap) resetRoadmap()
-    navigate('/')
+    setSubmitting(true)
+    setError('')
+    try {
+      if (needsNewRoadmap) await profileApi.changeLifeStage({ lifeStages, interests })
+      if (regionsChanged) await profileApi.updateJobPreference({ regions })
+      await reloadUser()
+      navigate('/')
+    } catch (err) {
+      setError(err.message)
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -79,9 +91,16 @@ export default function Settings() {
                 ? '저장하면 기존 로드맵은 활동 기록으로 남고 새 로드맵이 만들어져요.'
                 : '저장하면 맞춤 설정에 반영돼요.'}
             </p>
+            {error && (
+              <p className={styles.hint} role="alert">
+                {error}
+              </p>
+            )}
             <div className={styles.actions}>
               <Button variant="outline" to="/">취소</Button>
-              <Button type="submit" disabled={!valid}>변경사항 저장</Button>
+              <Button type="submit" disabled={!valid || submitting || (!needsNewRoadmap && !regionsChanged)}>
+                변경사항 저장
+              </Button>
             </div>
           </div>
         </Card>

@@ -1,28 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ChevronRight, Search } from 'lucide-react'
 import Card from '../../components/Card/Card.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
+import AsyncState from '../../components/AsyncState/AsyncState.jsx'
 import { Chip, Tag } from '../../components/Chip/Chip.jsx'
 import { INTEREST_FIELD, PROGRESS_STATUS, RECRUIT_STATUS } from '../../constants/enumLabels.js'
-import { policies } from '../../mocks/data.js'
-import { useAppState } from '../../context/AppState.jsx'
+import { policyApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
 import { formatRange } from '../../utils/date.js'
 import styles from './Policies.module.css'
 
-// 지원정보 목록 (GET /policies). 기본은 접수 중·접수 예정, 마감 가까운 순.
+// 지원정보 목록 (GET /policies). 기본은 접수 중·접수 예정, 마감 가까운 순. 로그인하면 내 진행상태가 함께 온다
 export default function Policies() {
-  const { policyStatus } = useAppState()
   const [params, setParams] = useSearchParams()
   const [keyword, setKeyword] = useState('')
+  const [query, setQuery] = useState('')
   const field = params.get('field')
 
-  const query = keyword.trim()
-  const list = policies
-    .filter((p) => p.recruitStatus === 'OPEN' || p.recruitStatus === 'UPCOMING')
-    .filter((p) => !field || p.field === field)
-    .filter((p) => !query || p.title.includes(query) || p.agency.includes(query))
-    .sort((a, b) => a.applyEndDate.localeCompare(b.applyEndDate))
+  // 입력이 멈추고 0.3초 뒤에 검색
+  useEffect(() => {
+    const t = setTimeout(() => setQuery(keyword.trim()), 300)
+    return () => clearTimeout(t)
+  }, [keyword])
+
+  const { data, loading, error, reload } = useApi(
+    () => policyApi.list({ field: field ?? undefined, keyword: query || undefined, size: 50 }),
+    [field, query],
+  )
+  const list = data?.content ?? []
 
   return (
     <div className={styles.page}>
@@ -51,28 +57,34 @@ export default function Policies() {
       </div>
 
       <Card padding="none" className={styles.card}>
-        <p className={styles.count}>{list.length}개</p>
-        {list.length === 0 ? (
-          <p className={styles.empty}>조건에 맞는 지원정보가 없어요. 분야나 검색어를 바꿔 보세요.</p>
+        {!data ? (
+          <AsyncState loading={loading} error={error} onRetry={reload} />
         ) : (
-          <ul>
-            {list.map((p) => (
-              <li key={p.policyId}>
-                <Link to={`/policies/${p.policyId}`} className={styles.row}>
-                  <span className={styles.main}>
-                    <strong>{p.title}</strong>
-                    <span>{p.agency} · 접수 {formatRange(p.applyStartDate, p.applyEndDate)}</span>
-                  </span>
-                  <span className={styles.meta}>
-                    <span className={styles.progress}>{PROGRESS_STATUS[policyStatus(p.policyId)]}</span>
-                    <Tag>{RECRUIT_STATUS[p.recruitStatus]}</Tag>
-                    <DdayTag date={p.applyEndDate} />
-                    <ChevronRight size={16} aria-hidden="true" />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <>
+            <p className={styles.count}>{data.totalElements}개</p>
+            {list.length === 0 ? (
+              <p className={styles.empty}>조건에 맞는 지원정보가 없어요. 분야나 검색어를 바꿔 보세요.</p>
+            ) : (
+              <ul>
+                {list.map((p) => (
+                  <li key={p.policyId}>
+                    <Link to={`/policies/${p.policyId}`} className={styles.row}>
+                      <span className={styles.main}>
+                        <strong>{p.title}</strong>
+                        <span>{p.agency} · 접수 {formatRange(p.applyStartDate, p.applyEndDate)}</span>
+                      </span>
+                      <span className={styles.meta}>
+                        {p.myStatus && <span className={styles.progress}>{PROGRESS_STATUS[p.myStatus]}</span>}
+                        <Tag>{RECRUIT_STATUS[p.recruitStatus]}</Tag>
+                        <DdayTag dDay={p.dDay} />
+                        <ChevronRight size={16} aria-hidden="true" />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </Card>
     </div>

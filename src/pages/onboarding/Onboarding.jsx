@@ -6,6 +6,7 @@ import Footer from '../../components/Footer/Footer.jsx'
 import Button from '../../components/Button/Button.jsx'
 import { ChipGroup } from '../../components/Chip/Chip.jsx'
 import { INTEREST_FIELD, JOB_CATEGORY, LIFE_STAGE, REGION } from '../../constants/enumLabels.js'
+import { profileApi } from '../../api/index.js'
 import { useAppState } from '../../context/AppState.jsx'
 import styles from './Onboarding.module.css'
 
@@ -38,8 +39,10 @@ const PREVIEW = [
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { updateProfile, updateJobPreference, resetRoadmap } = useAppState()
+  const { reloadUser } = useAppState()
   const [step, setStep] = useState(0)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
   const [lifeStages, setLifeStages] = useState([])
   const [interests, setInterests] = useState([])
   const [jobCategories, setJobCategories] = useState([])
@@ -49,13 +52,23 @@ export default function Onboarding() {
   const canNext = step === 2 ? jobCategories.length > 0 && regions.length > 0 : count > 0
   const current = STEPS[step]
 
-  const onNext = () => {
+  // 마지막 단계: PUT /users/me/profile → 서버가 규칙에 맞는 템플릿으로 로드맵을 만든다
+  const onNext = async () => {
     if (step < 2) return setStep(step + 1)
-    // TODO(6주차): PUT /users/me/profile 로 저장 후 로드맵 생성
-    updateProfile({ lifeStages, interests })
-    updateJobPreference({ jobCategories, regions })
-    resetRoadmap()
-    navigate('/onboarding/done')
+    setSubmitting(true)
+    setError('')
+    try {
+      await profileApi.save({
+        lifeStages,
+        interests,
+        jobPreference: { regions, jobCategories, careerLevel: 'NEW' },
+      })
+      await reloadUser()
+      navigate('/onboarding/done')
+    } catch (err) {
+      setError(err.message)
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -102,6 +115,11 @@ export default function Onboarding() {
             <span>{count > 0 ? `${count}개 선택했어요` : '하나 이상 골라 주세요'}</span>
             <span>{current.next}</span>
           </div>
+          {error && (
+            <p className={styles.foot} role="alert">
+              {error}
+            </p>
+          )}
 
           <div className={styles.actions}>
             {step > 0 && (
@@ -109,8 +127,8 @@ export default function Onboarding() {
                 <ArrowLeft size={16} aria-hidden="true" /> 이전
               </Button>
             )}
-            <Button size="lg" block disabled={!canNext} onClick={onNext}>
-              {step < 2 ? '다음' : '로드맵 만들기'} <ArrowRight size={16} aria-hidden="true" />
+            <Button size="lg" block disabled={!canNext || submitting} onClick={onNext}>
+              {step < 2 ? '다음' : submitting ? '로드맵 만드는 중…' : '로드맵 만들기'} <ArrowRight size={16} aria-hidden="true" />
             </Button>
           </div>
         </section>

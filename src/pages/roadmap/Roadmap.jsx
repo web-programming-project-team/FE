@@ -5,41 +5,55 @@ import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
+import AsyncState from '../../components/AsyncState/AsyncState.jsx'
 import { Tag } from '../../components/Chip/Chip.jsx'
 import StatusChangeModal from './StatusChangeModal.jsx'
-import { INTEREST_FIELD, LIFE_STAGE } from '../../constants/enumLabels.js'
-import { jobs, nextActions, policyById, roadmap } from '../../mocks/data.js'
+import { INTEREST_FIELD, LIFE_STAGE, RECRUIT_STATUS } from '../../constants/enumLabels.js'
+import { roadmapApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
 import { useAppState } from '../../context/AppState.jsx'
-import { daysUntil, formatDot, formatRange } from '../../utils/date.js'
+import { formatRange } from '../../utils/date.js'
 import { toggled } from '../../utils/set.js'
 import styles from './Roadmap.module.css'
 
-// 항목 정보: 정책에 연결된 항목은 정책 데이터를 합친다
-const resolveItem = (item) => ({ ...item, policy: item.policyId ? policyById(item.policyId) : null })
-
-// 임시 진행률 — 완료 1, 진행 중 2/3 가중. 서버 rate(GET /roadmaps/me) 연결 시 그 값을 그대로 쓴다.
-function summarize(statuses) {
-  const values = Object.values(statuses)
-  const completed = values.filter((s) => s === 'COMPLETED').length
-  const remaining = values.filter((s) => s === 'TO_CHECK').length
-  const inProgress = values.length - completed - remaining
-  const rate = Math.round(((completed + (inProgress * 2) / 3) / values.length) * 100)
-  return { completed, inProgress, remaining, rate }
-}
-
+// 내 로드맵: GET /roadmaps/me(타임라인) + GET /home/summary(다음 할 일·다가오는 마감)
 export default function Roadmap() {
-  const { profile, statuses, setItemStatus } = useAppState()
+  const { profile } = useAppState()
   const [modalOpen, setModalOpen] = useState(false)
+  const roadmapQuery = useApi(() => roadmapApi.mine(), [])
+  const summaryQuery = useApi(() => roadmapApi.summary(), [])
+  const roadmap = roadmapQuery.data
 
-  const stepDone = (step) => step.items.every((i) => statuses[i.itemId] === 'COMPLETED')
-  const currentStep = roadmap.steps.find((s) => !stepDone(s))?.stepOrder ?? null
   // 홈에서 단계를 눌러 들어오면 그 단계를 펼친다
   const { state } = useLocation()
-  const [openSteps, setOpenSteps] = useState(() => new Set([state?.step ?? currentStep]))
+  const [openSteps, setOpenSteps] = useState(() => new Set(state?.step ? [state.step] : []))
   const toggleStep = (order) => setOpenSteps((prev) => toggled(prev, order))
 
-  const summary = summarize(statuses)
+  // 진행상태 변경: PATCH 응답의 진행률을 바로 반영하고, 단계 완료·다음 할 일은 다시 불러온다
+  const changeStatus = async (itemId, status) => {
+    try {
+      const res = await roadmapApi.changeStatus(itemId, status)
+      roadmapQuery.setData((r) => ({
+        ...r,
+        progress: res.progress,
+        steps: r.steps.map((s) => ({
+          ...s,
+          items: s.items.map((i) => (i.itemId === itemId ? { ...i, status: res.status } : i)),
+        })),
+      }))
+      roadmapQuery.reload()
+      summaryQuery.reload()
+      if (res.suggestReview) window.alert('완료했어요! 커뮤니티에 1분 후기를 남겨 보세요.')
+    } catch (err) {
+      window.alert(err.message)
+    }
+  }
+
+  if (!roadmap) return <AsyncState loading={roadmapQuery.loading} error={roadmapQuery.error} onRetry={roadmapQuery.reload} />
+
+  const summary = roadmap.progress
   const itemCount = roadmap.steps.reduce((n, s) => n + s.items.length, 0)
+  const isOpen = (order) => openSteps.has(order) || (openSteps.size === 0 && order === roadmap.currentStep)
 
   return (
     <div className={styles.page}>
@@ -77,7 +91,7 @@ export default function Roadmap() {
             <span>
               완료 <b>{summary.completed}</b> · 진행 중 <b>{summary.inProgress}</b> · 남음 <b>{summary.remaining}</b>
             </span>
-            <span className={styles.muted}>단계별 가중 진행률</span>
+            <span className={styles.muted}>완료한 항목 기준</span>
           </div>
         </div>
       </Card>
@@ -85,7 +99,7 @@ export default function Roadmap() {
       <div className={styles.columns}>
         <section aria-labelledby="roadmap-title">
           <div className={styles.sectionHead}>
-            <h2 id="roadmap-title" className={styles.sectionTitle}>내 로드맵</h2>
+            <h2 id="roadmap-title" className={styles.sectionTitle}>{roadmap.templateName}</h2>
             <span className={styles.muted}>
               {roadmap.steps.length}단계 · {itemCount}개 항목
             </span>
@@ -93,9 +107,9 @@ export default function Roadmap() {
 
           <ol className={styles.timeline}>
             {roadmap.steps.map((step, index) => {
-              const done = stepDone(step)
-              const isCurrent = step.stepOrder === currentStep
-              const open = openSteps.has(step.stepOrder)
+              const done = step.completed
+              const isCurrent = step.stepOrder === roadmap.currentStep
+              const open = isOpen(step.stepOrder)
               const isLast = index === roadmap.steps.length - 1
               return (
                 <li
@@ -129,12 +143,12 @@ export default function Roadmap() {
 
                   {open && (
                     <div className={styles.items}>
-                      {step.items.map(resolveItem).map((item) => (
+                      {step.items.length === 0 && <p className={styles.muted}>아직 담긴 지원이 없어요.</p>}
+                      {step.items.map((item) => (
                         <RoadmapItem
                           key={item.itemId}
                           item={item}
-                          status={statuses[item.itemId]}
-                          onStatusChange={(s) => setItemStatus(item.itemId, s)}
+                          onStatusChange={(s) => changeStatus(item.itemId, s)}
                         />
                       ))}
                     </div>
@@ -146,12 +160,14 @@ export default function Roadmap() {
         </section>
 
         <aside className={styles.side}>
-          <NextActions />
-          <UpcomingDeadlines />
+          <NextActions summary={summaryQuery.data} onStatusChange={changeStatus} />
+          <UpcomingDeadlines summary={summaryQuery.data} />
           <Link to="/jobs" className={styles.jobsBanner}>
             <span>
-              <strong>새 맞춤 공고 3건</strong>
-              <span>사무·IT 신입 공고를 확인해 보세요</span>
+              <strong>
+                {summaryQuery.data?.newJobCount ? `새 맞춤 공고 ${summaryQuery.data.newJobCount}건` : '맞춤 채용공고'}
+              </strong>
+              <span>내 조건에 맞는 신입 공고를 확인해 보세요</span>
             </span>
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
@@ -162,51 +178,48 @@ export default function Roadmap() {
         <StatusChangeModal
           open
           onClose={() => setModalOpen(false)}
-          onRenewed={() => setOpenSteps(new Set([roadmap.steps[0].stepOrder]))}
+          onRenewed={() => {
+            setOpenSteps(new Set())
+            roadmapQuery.reload()
+            summaryQuery.reload()
+          }}
         />
       )}
     </div>
   )
 }
 
-function RoadmapItem({ item, status, onStatusChange }) {
-  const { policy } = item
+function RoadmapItem({ item, onStatusChange }) {
+  const ended = item.recruitStatus === 'ENDED'
   return (
     <Card as="article" className={styles.itemCard}>
       <div className={styles.itemTop}>
-        <h3 className={styles.itemTitle}>{policy?.title ?? item.title}</h3>
-        {policy && <DdayTag date={policy.applyEndDate} />}
+        <h3 className={styles.itemTitle}>{item.title}</h3>
+        {ended ? <Tag>{RECRUIT_STATUS.ENDED}</Tag> : <DdayTag dDay={item.dDay} />}
       </div>
       <div className={styles.itemSub}>
-        <span>{policy?.agency ?? item.agency}</span>
-        {policy && (
-          <span>
-            <span className={styles.muted}>접수</span> {formatRange(policy.applyStartDate, policy.applyEndDate)}
-          </span>
-        )}
+        <span>{item.agency}</span>
+        <span>
+          <span className={styles.muted}>접수</span> {formatRange(item.applyStartDate, item.applyEndDate)}
+        </span>
       </div>
       <div className={styles.itemActions}>
-        <StatusSelect value={status} onChange={onStatusChange} />
-        {policy && (
-          <div className={styles.buttons}>
-            <Button variant="outline" to={`/policies/${policy.policyId}`}>자세히</Button>
-            <Button href={policy.applyUrl}>
-              공식 사이트 <ExternalLink size={14} aria-hidden="true" />
-            </Button>
-          </div>
-        )}
+        <StatusSelect value={item.status} onChange={onStatusChange} />
+        <div className={styles.buttons}>
+          <Button variant="outline" to={`/policies/${item.policyId}`}>자세히</Button>
+          <Button href={item.applyUrl}>
+            공식 사이트 <ExternalLink size={14} aria-hidden="true" />
+          </Button>
+        </div>
       </div>
-      {policy && (
-        <p className={styles.source}>
-          마지막 정보 확인일 {formatDot(policy.lastVerifiedAt)} · 출처 {policy.agency}
-        </p>
-      )}
+      {ended && <p className={styles.source}>운영기관이 종료한 정책이에요.</p>}
     </Card>
   )
 }
 
-function NextActions() {
-  const { statuses, setItemStatus, setNotificationOpen } = useAppState()
+function NextActions({ summary, onStatusChange }) {
+  const { setNotificationOpen } = useAppState()
+  const list = summary?.nextActions ?? []
   return (
     <Card>
       <CardHeader
@@ -218,43 +231,37 @@ function NextActions() {
         }
       />
       <ul className={styles.todoList}>
-        {nextActions.map(({ itemId, policyId, title, actionLabel }) => (
+        {list.map(({ itemId, policyId, title, status, actionLabel }) => (
           <li key={itemId} className={styles.todo}>
             <div className={styles.todoBody}>
               <Link to={`/policies/${policyId}`} className={styles.todoTitle}>{title}</Link>
               <span className={styles.muted}>{actionLabel}</span>
-              <StatusSelect value={statuses[itemId]} onChange={(s) => setItemStatus(itemId, s)} />
+              <StatusSelect value={status} onChange={(s) => onStatusChange(itemId, s)} />
             </div>
             <Link to={`/policies/${policyId}`} aria-label={`${title} 상세`} className={styles.todoArrow}>
               <ChevronRight size={18} />
             </Link>
           </li>
         ))}
+        {summary && list.length === 0 && <li className={styles.muted}>지금 할 일이 없어요.</li>}
       </ul>
     </Card>
   )
 }
 
-function UpcomingDeadlines() {
-  const policyIds = roadmap.steps.flatMap((s) => s.items).map((i) => i.policyId).filter(Boolean)
-  const list = [
-    ...policyIds.map(policyById).map((p) => ({ key: `p${p.policyId}`, name: p.title, date: p.applyEndDate })),
-    ...jobs.map((j) => ({ key: `j${j.jobId}`, name: `${j.company.replace('(주)', '')} ${j.title}`, date: j.deadline })),
-  ]
-    .filter((d) => daysUntil(d.date) >= 0)
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(0, 5)
-
+function UpcomingDeadlines({ summary }) {
+  const list = summary?.upcomingDeadlines ?? []
   return (
     <Card>
       <CardHeader title="다가오는 마감" />
       <ul className={styles.deadlines}>
         {list.map((d) => (
-          <li key={d.key}>
-            <span>{d.name}</span>
-            <DdayTag date={d.date} />
+          <li key={`${d.sourceType}-${d.sourceId}-${d.date}`}>
+            {d.sourceType === 'POLICY' ? <Link to={`/policies/${d.sourceId}`}>{d.title}</Link> : <span>{d.title}</span>}
+            <DdayTag dDay={d.dDay} />
           </li>
         ))}
+        {summary && list.length === 0 && <li className={styles.muted}>2주 안에 마감되는 일정이 없어요.</li>}
       </ul>
     </Card>
   )
