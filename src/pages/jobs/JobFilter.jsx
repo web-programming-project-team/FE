@@ -4,7 +4,10 @@ import { EDUCATION, EMPLOYMENT_TYPE, JOB_CATEGORY, REGION } from '../../constant
 import styles from './JobFilter.module.css'
 
 // 맞춤 채용 조건 (Figma "필터"). 고른 값은 프로필의 채용 조건으로 저장된다.
-export default function JobFilter({ regions, jobCategories, onChange }) {
+export default function JobFilter({ regions, jobCategories, education, employmentTypes = [], onChange }) {
+  // 학력·고용형태는 이 패널에서 고르지 않는다. 저장된 값이 없으면 '무관'
+  const educationLabel = education ? `${EDUCATION[education]}${education === 'UNIVERSITY' ? '(졸업 예정 포함)' : ''}` : '무관'
+  const employmentLabel = employmentTypes.length ? employmentTypes.map((t) => EMPLOYMENT_TYPE[t]).join('·') : '무관'
   const toggle = (list, value) => (list.includes(value) ? list.filter((v) => v !== value) : [...list, value])
 
   return (
@@ -45,7 +48,7 @@ export default function JobFilter({ regions, jobCategories, onChange }) {
         </fieldset>
       </div>
       <p className={styles.fixed}>
-        학력 {EDUCATION.UNIVERSITY}(졸업 예정 포함) · 경력 신입 · 고용형태 {EMPLOYMENT_TYPE.FULL_TIME}
+        학력 {educationLabel} · 경력 신입 · 고용형태 {employmentLabel}
       </p>
     </Card>
   )
