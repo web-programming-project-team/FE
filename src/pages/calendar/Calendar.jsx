@@ -141,7 +141,7 @@ export default function Calendar() {
                       {dayEvents.map((e) => (
                         <span key={e.eventId} className={styles.cellEvent}>
                           <span className={`${styles.dot} ${styles.small} ${DOT[e.type]}`} aria-hidden="true" />
-                          {e.title}
+                          <span className={styles.cellTitle}>{e.title}</span>
                         </span>
                       ))}
                     </span>

@@ -24,7 +24,7 @@
   align-items: center;
   gap: var(--space-2);
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .count {
@@ -60,14 +60,14 @@
 .tab {
   padding: var(--space-2) var(--space-1);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
   border-bottom: 2px solid transparent;
 }
 
 .tabActive {
   color: var(--color-primary-strong);
-  font-weight: 600;
+  font-weight: 700;
   border-bottom-color: var(--color-primary);
 }
 
@@ -117,7 +117,7 @@
 
 .itemTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 

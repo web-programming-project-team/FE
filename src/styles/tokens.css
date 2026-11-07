@@ -6,19 +6,19 @@
   --color-primary-soft: #F0F3FA;     /* 선택 배경, 안내 박스 */
   --color-bg: #F7F9FC;
   --color-card: #FFFFFF;
-  --color-line: #DDE2ED;
+  --color-line: #C9D1DE;             /* 카드 테두리, 흰 배경 대비 1.5:1 */
   --color-fill: #F3F4F6;             /* 중립 배지·칩 배경 */
   --color-text: #101828;
   --color-text-2: #364153;
-  --color-text-3: #6A7282;
-  --color-text-4: #6F7785;
+  --color-text-3: #4A5565;           /* 보조 글자, 흰 배경 대비 7.6:1 */
+  --color-text-4: #5B6472;           /* 흰 배경 대비 6:1 */
   --color-danger: #EC003F;           /* D-3 이하 */
   --color-danger-soft: #FFF1F2;
   --color-warn: #FE9A00;             /* D-4 ~ D-7 */
   --color-warn-soft: #FFFBEB;
   --color-overlay: rgb(0 0 0 / 0.4);
-  --color-accent: #F0633D;           /* 주요 행동 버튼 (시흥 주황 계열). D-day 경고색과 별개 */
-  --color-accent-strong: #D44E2A;
+  --color-accent: #EE4A1E;           /* 주요 행동 버튼. #F0633D와 #DA3B11의 중간 명도, 흰 글자 대비 3.7:1. D-day 경고색과 별개 */
+  --color-accent-strong: #D03910;    /* 마우스 올렸을 때 */
   --color-hero-from: #123A77;        /* 홈 히어로 그라데이션 */
   --color-hero-to: #3D6CC0;
   --color-hero-ring: rgb(255 255 255 / 0.1);     /* 히어로 장식: 반투명 링 */
@@ -56,16 +56,16 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* 글자 크기 */
-  --fs-xs: 12px;
-  --fs-sm: 13px;
-  --fs-md: 14px;
-  --fs-base: 15px;
-  --fs-lg: 17px;
-  --fs-xl: 20px;
+  /* 글자 크기: KRDS 기준 (본문 최소 16px, 기본 17px, 본문 단계 19·17·15·13, 제목 24·32·40) */
+  --fs-xs: 13px;
+  --fs-sm: 15px;
+  --fs-md: 16px;
+  --fs-base: 17px;
+  --fs-lg: 19px;
+  --fs-xl: 22px;
   --fs-2xl: 24px;
-  --fs-3xl: 28px;
-  --fs-4xl: 32px;
+  --fs-3xl: 32px;
+  --fs-4xl: 36px;
   --fs-5xl: 40px;
 
   /* 모서리·그림자 */

@@ -56,7 +56,7 @@
 .eyebrow,
 .startHere {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primary-strong);
 }
 
@@ -80,7 +80,7 @@
   align-items: center;
   gap: var(--space-1);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-2);
   white-space: nowrap;
 }
@@ -148,7 +148,7 @@
 .currentTitle {
   margin-top: var(--space-1);
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .currentBody {
@@ -169,7 +169,7 @@
   border-radius: var(--radius-pill);
   background: var(--color-fill);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
@@ -218,7 +218,7 @@
 
 .sideTitle {
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .edit {
@@ -236,7 +236,7 @@
 .value {
   margin-top: var(--space-2);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .tags {
@@ -263,7 +263,7 @@
 .guideTitle {
   margin-bottom: var(--space-3);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -283,7 +283,7 @@
 
 .sectionTitle {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .interests {
@@ -317,7 +317,7 @@
 
 .interest strong {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 

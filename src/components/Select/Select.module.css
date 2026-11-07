@@ -81,7 +81,7 @@
 
 .option[aria-selected='true'] {
   color: var(--color-primary-strong);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .check {

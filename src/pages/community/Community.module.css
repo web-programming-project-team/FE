@@ -19,7 +19,7 @@
   border-radius: var(--radius-pill);
   background: var(--color-fill);
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
@@ -33,7 +33,7 @@
   margin-bottom: -1px;
   padding: var(--space-4) var(--space-2);
   font-size: var(--fs-lg);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
   border-bottom: 3px solid transparent;
 }
@@ -71,7 +71,7 @@
 .filterHead h2 {
   margin-top: var(--space-2);
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .filterHead button {
@@ -82,7 +82,7 @@
 .filterLabel {
   margin: var(--space-5) 0 var(--space-3);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .chips {
@@ -147,7 +147,7 @@
   padding-inline: var(--space-2);
   border-color: transparent;
   background: transparent;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -219,7 +219,7 @@
 
 .postTitle {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.5;
 }
 

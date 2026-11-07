@@ -33,7 +33,7 @@
 }
 
 .breadcrumb [aria-current] {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -110,7 +110,7 @@
   gap: var(--space-1-5);
   justify-self: start;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-primary-strong);
 }
 
@@ -123,7 +123,7 @@
 
 .sectionTitle {
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .more {
@@ -150,7 +150,7 @@
 .reviewTitle {
   min-height: 3em;
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.6;
 }
 
@@ -161,7 +161,7 @@
 
 .reviewMeta b {
   margin-left: var(--space-1);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-2);
 }
 
@@ -185,7 +185,7 @@
 
 .jobTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .jobMeta {
@@ -215,7 +215,7 @@
 
 .sideTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dday {

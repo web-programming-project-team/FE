@@ -39,7 +39,7 @@
 
 .sectionTitle {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .sectionHint {
@@ -59,7 +59,7 @@
 }
 
 .label {
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .input {
@@ -110,7 +110,7 @@
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
   color: var(--color-primary-strong);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .box {
@@ -170,7 +170,7 @@
 
 .saved dd {
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
   text-align: right;
 }
 
@@ -184,7 +184,7 @@
 
 .guideTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 

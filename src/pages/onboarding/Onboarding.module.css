@@ -37,7 +37,7 @@
 }
 
 .eyebrow {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primary-strong);
 }
 
@@ -91,7 +91,7 @@
 .groupLabel {
   margin: var(--space-5) 0 var(--space-3);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
@@ -129,7 +129,7 @@
 
 .preview strong {
   margin-right: var(--space-1);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 

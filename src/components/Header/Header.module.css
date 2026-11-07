@@ -22,24 +22,48 @@
 }
 
 .link {
+  position: relative;
   display: flex;
   align-items: center;
   height: 100%;
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
   white-space: nowrap;
-  border-bottom: 3px solid transparent;
+}
+
+/* 메뉴 아래 막대: 마우스를 올리면 왼쪽에서 오른쪽으로 펼쳐지고, 현재 메뉴는 펼친 채 유지 */
+.link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease-out;
 }
 
 .link:hover {
   color: var(--color-text);
 }
 
+.link:hover::after,
+.link:focus-visible::after,
+.active::after {
+  transform: scaleX(1);
+}
+
 .active {
   color: var(--color-primary-strong);
-  font-weight: 700;
-  border-bottom-color: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link::after {
+    transition: none;
+  }
 }
 
 .right {
@@ -105,7 +129,7 @@
   height: 40px;
   padding-inline: var(--space-3);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
@@ -138,7 +162,7 @@
 .userMenu a {
   padding: var(--space-2-5) var(--space-3);
   border-radius: var(--radius-sm);
-  font-weight: 500;
+  font-weight: 400;
   white-space: nowrap;
 }
 

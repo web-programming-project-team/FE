@@ -63,7 +63,7 @@
   align-items: baseline;
   gap: var(--space-2);
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .listTitle span {
@@ -123,7 +123,7 @@
 .jobTitle {
   margin-top: var(--space-1);
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .jobTools {
@@ -181,7 +181,7 @@
 
 .supportTitle {
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primary-strong);
 }
 
@@ -203,7 +203,7 @@
   align-items: center;
   gap: var(--space-0-5);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text);
 }
 
@@ -244,7 +244,7 @@
 
 .pass strong {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.6;
 }
 
@@ -273,7 +273,7 @@
   align-items: center;
   gap: var(--space-0-5);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
 }
 
