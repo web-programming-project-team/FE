@@ -56,63 +56,66 @@ export default function Jobs() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <PageHead icon={Briefcase} title="맞춤 채용" description="내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요." />
-        <div className={styles.conditions}>
-          {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
-          {education && <Tag tone="outline">{EDUCATION[education]}</Tag>}
-          <Tag tone="outline">신입</Tag>
-          {categoryLabel && <Tag tone="outline">{categoryLabel}</Tag>}
-          {employmentLabel && <Tag tone="outline">{employmentLabel}</Tag>}
-          {graduating && education === 'UNIVERSITY' && (
-            <span className={styles.note}>대졸은 {LIFE_STAGE.GRADUATING} 포함</span>
-          )}
-        </div>
-        <button
-          type="button"
-          className={styles.filterToggle}
-          aria-expanded={filterOpen}
-          onClick={() => setFilterOpen(!filterOpen)}
-        >
-          조건 수정 {filterOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-        <Collapse open={filterOpen}>
-          <JobFilter
-            regions={regions}
-            jobCategories={jobCategories}
-            education={education}
-            employmentTypes={employmentTypes}
-            // PATCH /users/me/job-preference (보낸 필드만 바뀜)
-            onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
-          />
-        </Collapse>
-      </header>
+      <PageHead icon={Briefcase} title="맞춤 채용" description="내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요." />
 
       <div className={styles.columns}>
-        <section aria-labelledby="job-list-title">
-          <div className={styles.listHead}>
-            <h2 id="job-list-title" className={styles.listTitle}>
-              맞춤 공고 <span>{list.length}</span>
-              <small>사람인·관리자 등록 공고 기준</small>
-            </h2>
-            <Select
-              label="정렬"
-              value={sort}
-              onChange={setSort}
-              options={Object.entries(SORTS).map(([key, s]) => [key, s.label])}
-            />
-          </div>
-          <p className={styles.listNote}>공고 확인과 입사 지원은 공식 사이트에서 진행돼요.</p>
+        <div className={styles.main}>
+          <header className={styles.head}>
+            <div className={styles.conditions}>
+              {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
+              {education && <Tag tone="outline">{EDUCATION[education]}</Tag>}
+              <Tag tone="outline">신입</Tag>
+              {categoryLabel && <Tag tone="outline">{categoryLabel}</Tag>}
+              {employmentLabel && <Tag tone="outline">{employmentLabel}</Tag>}
+              {graduating && education === 'UNIVERSITY' && (
+                <span className={styles.note}>대졸은 {LIFE_STAGE.GRADUATING} 포함</span>
+              )}
+            </div>
+            <button
+              type="button"
+              className={styles.filterToggle}
+              aria-expanded={filterOpen}
+              onClick={() => setFilterOpen(!filterOpen)}
+            >
+              조건 수정 {filterOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+            <Collapse open={filterOpen}>
+              <JobFilter
+                regions={regions}
+                jobCategories={jobCategories}
+                education={education}
+                employmentTypes={employmentTypes}
+                // PATCH /users/me/job-preference (보낸 필드만 바뀜)
+                onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
+              />
+            </Collapse>
+          </header>
 
-          <div className={styles.list}>
-            {list.length === 0 && (
-              <Card className={styles.empty}>조건에 맞는 공고가 없어요. 조건을 넓혀 보세요.</Card>
-            )}
-            {list.map((job) => (
-              <JobCard key={job.jobId} job={job} />
-            ))}
-          </div>
-        </section>
+          <section aria-labelledby="job-list-title">
+            <div className={styles.listHead}>
+              <h2 id="job-list-title" className={styles.listTitle}>
+                맞춤 공고 <span>{list.length}</span>
+                <small>사람인·관리자 등록 공고 기준</small>
+              </h2>
+              <Select
+                label="정렬"
+                value={sort}
+                onChange={setSort}
+                options={Object.entries(SORTS).map(([key, s]) => [key, s.label])}
+              />
+            </div>
+            <p className={styles.listNote}>공고 확인과 입사 지원은 공식 사이트에서 진행돼요.</p>
+
+            <div className={styles.list}>
+              {list.length === 0 && (
+                <Card className={styles.empty}>조건에 맞는 공고가 없어요. 조건을 넓혀 보세요.</Card>
+              )}
+              {list.map((job) => (
+                <JobCard key={job.jobId} job={job} />
+              ))}
+            </div>
+          </section>
+        </div>
 
         <aside className={styles.side}>
           <PassReviews />

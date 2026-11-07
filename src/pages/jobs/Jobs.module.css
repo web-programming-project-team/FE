@@ -13,7 +13,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-6);
 }
 
 .conditions > span:not(.note) {
@@ -42,6 +41,11 @@
 
 .head > section {
   width: 100%;
+}
+
+.main {
+  display: grid;
+  gap: var(--space-4);
 }
 
 .columns {
@@ -219,7 +223,6 @@
 .side {
   display: grid;
   gap: var(--space-5);
-  margin-top: calc(var(--space-10) + var(--space-5));
 }
 
 .sideDescription {
@@ -329,9 +332,5 @@
 @media (max-width: 1024px) {
   .columns {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .side {
-    margin-top: 0;
   }
 }

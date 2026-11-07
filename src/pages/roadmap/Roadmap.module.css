@@ -18,18 +18,15 @@
   align-items: center;
   gap: var(--space-1);
   height: 40px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-pill);
-  background: var(--color-card);
   font-size: var(--fs-sm);
   font-weight: 700;
-  color: var(--color-text-2);
+  color: var(--color-primary);
 }
 
 .changeLink:hover {
-  border-color: var(--color-primary);
   color: var(--color-primary-strong);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 /* 상단 박스 아래 내 상황 줄 */
@@ -331,6 +328,11 @@
 }
 
 /* 오른쪽 사이드 */
+.main {
+  display: grid;
+  gap: var(--space-6);
+}
+
 .side {
   display: grid;
   gap: var(--space-5);

@@ -92,91 +92,93 @@ export default function Roadmap() {
         }
       />
 
-      {/* 내 상황: 로드맵을 만든 기준. 바꾸면 새 로드맵을 만든다 */}
-      <div className={styles.situation}>
-        <dl className={styles.situationList}>
-          <div>
-            <dt>현재 상황</dt>
-            <dd className={styles.stages}>
-              {profile.lifeStages.map((s) => (
-                <span key={s}>{LIFE_STAGE[s]}</span>
-              ))}
-            </dd>
-          </div>
-          <div>
-            <dt>관심분야</dt>
-            <dd className={styles.interests}>
-              {profile.interests.map((f) => (
-                <span key={f}>{INTEREST_FIELD[f]}</span>
-              ))}
-            </dd>
-          </div>
-        </dl>
-        <button type="button" className={styles.changeLink} onClick={() => setModalOpen(true)}>
-          상황 바꾸기 <ChevronRight size={16} aria-hidden="true" />
-        </button>
-      </div>
-
       <div className={styles.columns}>
-        <section aria-labelledby="roadmap-title">
-          <div className={styles.sectionHead}>
-            <h2 id="roadmap-title" className={styles.sectionTitle}>{roadmap.templateName}</h2>
-            <span className={styles.muted}>
-              {roadmap.steps.length}단계 · {itemCount}개 항목
-            </span>
+        <div className={styles.main}>
+          {/* 내 상황: 로드맵을 만든 기준. 바꾸면 새 로드맵을 만든다 */}
+          <div className={styles.situation}>
+            <dl className={styles.situationList}>
+              <div>
+                <dt>현재 상황</dt>
+                <dd className={styles.stages}>
+                  {profile.lifeStages.map((s) => (
+                    <span key={s}>{LIFE_STAGE[s]}</span>
+                  ))}
+                </dd>
+              </div>
+              <div>
+                <dt>관심분야</dt>
+                <dd className={styles.interests}>
+                  {profile.interests.map((f) => (
+                    <span key={f}>{INTEREST_FIELD[f]}</span>
+                  ))}
+                </dd>
+              </div>
+            </dl>
+            <button type="button" className={styles.changeLink} onClick={() => setModalOpen(true)}>
+              상황 바꾸기 <ChevronRight size={16} aria-hidden="true" />
+            </button>
           </div>
 
-          <ol className={styles.timeline}>
-            {roadmap.steps.map((step, index) => {
-              const done = step.completed
-              const isCurrent = step.stepOrder === roadmap.currentStep
-              const open = openSteps.has(step.stepOrder)
-              const isLast = index === roadmap.steps.length - 1
-              return (
-                <li
-                  key={step.stepOrder}
-                  className={`${styles.step} ${isCurrent ? styles.current : ''} ${done ? styles.done : ''}`}
-                >
-                  {!isLast && <span className={styles.line} aria-hidden="true" />}
-                  <span className={styles.marker} aria-hidden="true">
-                    {done ? <Check size={14} strokeWidth={2.5} /> : step.stepOrder}
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.stepHead}
-                    aria-expanded={open}
-                    onClick={() => toggleStep(step.stepOrder)}
-                  >
-                    <span className={styles.stepTitle}>
-                      {step.title}
-                      {done && (
-                        <span className={styles.doneBadge}>
-                          <Check size={12} strokeWidth={2.5} aria-hidden="true" /> 완료
-                        </span>
-                      )}
-                      {isCurrent && <span className={styles.currentBadge}>현재 단계</span>}
-                    </span>
-                    <span className={styles.stepMeta}>
-                      {step.items.length}개 항목
-                      {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    </span>
-                  </button>
+          <section aria-labelledby="roadmap-title">
+            <div className={styles.sectionHead}>
+              <h2 id="roadmap-title" className={styles.sectionTitle}>{roadmap.templateName}</h2>
+              <span className={styles.muted}>
+                {roadmap.steps.length}단계 · {itemCount}개 항목
+              </span>
+            </div>
 
-                  <Collapse open={open} className={styles.items}>
-                    {step.items.length === 0 && <p className={styles.muted}>아직 담긴 지원이 없어요.</p>}
-                    {step.items.map((item) => (
-                      <RoadmapItem
-                        key={item.itemId}
-                        item={item}
-                        onStatusChange={(s) => changeStatus(item.itemId, s)}
-                      />
-                    ))}
-                  </Collapse>
-                </li>
-              )
-            })}
-          </ol>
-        </section>
+            <ol className={styles.timeline}>
+              {roadmap.steps.map((step, index) => {
+                const done = step.completed
+                const isCurrent = step.stepOrder === roadmap.currentStep
+                const open = openSteps.has(step.stepOrder)
+                const isLast = index === roadmap.steps.length - 1
+                return (
+                  <li
+                    key={step.stepOrder}
+                    className={`${styles.step} ${isCurrent ? styles.current : ''} ${done ? styles.done : ''}`}
+                  >
+                    {!isLast && <span className={styles.line} aria-hidden="true" />}
+                    <span className={styles.marker} aria-hidden="true">
+                      {done ? <Check size={14} strokeWidth={2.5} /> : step.stepOrder}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.stepHead}
+                      aria-expanded={open}
+                      onClick={() => toggleStep(step.stepOrder)}
+                    >
+                      <span className={styles.stepTitle}>
+                        {step.title}
+                        {done && (
+                          <span className={styles.doneBadge}>
+                            <Check size={12} strokeWidth={2.5} aria-hidden="true" /> 완료
+                          </span>
+                        )}
+                        {isCurrent && <span className={styles.currentBadge}>현재 단계</span>}
+                      </span>
+                      <span className={styles.stepMeta}>
+                        {step.items.length}개 항목
+                        {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    </button>
+
+                    <Collapse open={open} className={styles.items}>
+                      {step.items.length === 0 && <p className={styles.muted}>아직 담긴 지원이 없어요.</p>}
+                      {step.items.map((item) => (
+                        <RoadmapItem
+                          key={item.itemId}
+                          item={item}
+                          onStatusChange={(s) => changeStatus(item.itemId, s)}
+                        />
+                      ))}
+                    </Collapse>
+                  </li>
+                )
+              })}
+            </ol>
+          </section>
+        </div>
 
         <aside className={styles.side}>
           <NextActions summary={summaryQuery.data} onStatusChange={changeStatus} />
