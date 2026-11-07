@@ -40,6 +40,15 @@
   background: var(--color-primary-strong);
 }
 
+.accent {
+  background: var(--color-accent);
+  color: var(--color-card);
+}
+
+.accent:hover:not(:disabled) {
+  background: var(--color-accent-strong);
+}
+
 .outline {
   background: var(--color-card);
   color: var(--color-text);

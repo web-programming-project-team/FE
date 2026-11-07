@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Ellipsis, Heart, Pencil } from 'lucide-react'
+import { Ellipsis, Heart, MessagesSquare, Pencil } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
 import Select from '../../components/Select/Select.jsx'
@@ -60,20 +61,21 @@ export default function Community() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.title}>커뮤니티</h1>
-          <p className={styles.description}>먼저 경험한 청년의 이야기에서 다음 걸음의 힌트를 찾아보세요.</p>
-        </div>
-        <div className={styles.headActions}>
-          <button type="button" className={styles.noti} onClick={() => setNotificationOpen(true)}>
-            알림 <span>{unreadCount}</span>
-          </button>
-          <Button size="lg" onClick={() => setWriteOpen(true)}>
-            <Pencil size={16} aria-hidden="true" /> 1분 후기 쓰기
-          </Button>
-        </div>
-      </header>
+      <PageHead
+        icon={MessagesSquare}
+        title="커뮤니티"
+        description="먼저 경험한 청년의 이야기에서 다음 걸음의 힌트를 찾아보세요."
+        actions={
+          <>
+            <button type="button" className={styles.noti} onClick={() => setNotificationOpen(true)}>
+              알림 <span>{unreadCount}</span>
+            </button>
+            <Button size="lg" onClick={() => setWriteOpen(true)}>
+              <Pencil size={16} aria-hidden="true" /> 1분 후기 쓰기
+            </Button>
+          </>
+        }
+      />
 
       <div className={styles.tabs} role="tablist">
         {Object.entries(POST_TYPE).map(([key, label]) => (

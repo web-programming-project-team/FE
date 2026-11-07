@@ -206,7 +206,7 @@ function RoadmapItem({ item, onStatusChange }) {
         <StatusSelect value={item.status} onChange={onStatusChange} />
         <div className={styles.buttons}>
           <Button variant="outline" to={`/policies/${item.policyId}`}>자세히</Button>
-          <Button href={item.applyUrl}>
+          <Button variant="accent" href={item.applyUrl}>
             공식 사이트 <ExternalLink size={14} aria-hidden="true" />
           </Button>
         </div>

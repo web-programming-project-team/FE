@@ -1,16 +1,3 @@
-.title {
-  font-size: var(--fs-4xl);
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-}
-
-.description {
-  margin-top: var(--space-3);
-  font-size: var(--fs-base);
-  color: var(--color-text-2);
-}
-
 .toolbar {
   display: flex;
   flex-wrap: wrap;

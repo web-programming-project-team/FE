@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { Bell, ChevronDown, UserRound } from 'lucide-react'
+import { Bell, ChevronDown, Search, UserRound } from 'lucide-react'
 import Logo from '../Logo/Logo.jsx'
 import NotificationDropdown from '../NotificationDropdown/NotificationDropdown.jsx'
 import { useAppState } from '../../context/AppState.jsx'
@@ -17,6 +17,13 @@ const MENUS = [
 
 export default function Header() {
   const { unreadCount, notificationOpen, setNotificationOpen } = useAppState()
+  const navigate = useNavigate()
+
+  const search = (e) => {
+    e.preventDefault()
+    const keyword = new FormData(e.currentTarget).get('keyword').trim()
+    navigate(keyword ? `/policies?keyword=${encodeURIComponent(keyword)}` : '/policies')
+  }
 
   return (
     <header className={styles.header}>
@@ -33,6 +40,12 @@ export default function Header() {
         ))}
       </nav>
       <div className={styles.right}>
+        <form role="search" className={styles.search} onSubmit={search}>
+          <input name="keyword" type="search" placeholder="지원정보 검색" aria-label="지원정보 검색" />
+          <button type="submit" aria-label="검색">
+            <Search size={18} aria-hidden="true" />
+          </button>
+        </form>
         <button
           type="button"
           className={styles.bell}

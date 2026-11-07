@@ -17,6 +17,10 @@
   --color-warn: #FE9A00;             /* D-4 ~ D-7 */
   --color-warn-soft: #FFFBEB;
   --color-overlay: rgb(0 0 0 / 0.4);
+  --color-accent: #F0633D;           /* 주요 행동 버튼 (시흥 주황 계열). D-day 경고색과 별개 */
+  --color-accent-strong: #D44E2A;
+  --color-hero-from: #123A77;        /* 홈 히어로 그라데이션 */
+  --color-hero-to: #3D6CC0;
 
   /* 진행상태 배지: 글자 / 배경 */
   --st-to-check: #6A7282;    --st-to-check-bg: #F3F4F6;
@@ -70,7 +74,7 @@
   --shadow-pop: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
   /* 레이아웃 */
-  --header-height: 64px;
+  --header-height: 76px;
   --container-width: 1200px;
   --side-width: 384px;
 

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bell, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import { Bell, CalendarDays, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
@@ -71,15 +72,16 @@ export default function Calendar() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.title}>NEXT 캘린더</h1>
-          <p className={styles.description}>준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요.</p>
-        </div>
-        <button type="button" className={styles.notiButton} onClick={() => setNotificationOpen(true)}>
-          <Bell size={16} aria-hidden="true" /> 알림 {unreadCount > 0 && <span>{unreadCount}</span>}
-        </button>
-      </header>
+      <PageHead
+        icon={CalendarDays}
+        title="NEXT 캘린더"
+        description="준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요."
+        actions={
+          <button type="button" className={styles.notiButton} onClick={() => setNotificationOpen(true)}>
+            <Bell size={16} aria-hidden="true" /> 알림 {unreadCount > 0 && <span>{unreadCount}</span>}
+          </button>
+        }
+      />
 
       <div className={styles.columns}>
         <Card className={styles.calendar}>

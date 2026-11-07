@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Bookmark, ChevronDown, ChevronRight, ChevronUp, ExternalLink } from 'lucide-react'
+import { ArrowRight, Bookmark, Briefcase, ChevronDown, ChevronRight, ChevronUp, ExternalLink } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
 import Slide from '../../components/Slide/Slide.jsx'
@@ -56,8 +57,7 @@ export default function Jobs() {
   return (
     <div className={styles.page}>
       <header className={styles.head}>
-        <h1 className={styles.title}>맞춤 채용</h1>
-        <p className={styles.description}>내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요.</p>
+        <PageHead icon={Briefcase} title="맞춤 채용" description="내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요." />
         <div className={styles.conditions}>
           {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
           {education && <Tag tone="outline">{EDUCATION[education]}</Tag>}

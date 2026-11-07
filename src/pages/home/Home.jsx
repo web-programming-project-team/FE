@@ -92,7 +92,7 @@ export default function Home() {
                     <p className={styles.currentBody}>
                       {step.items.length > 0 ? step.items.map((i) => i.title).join(' · ') : '아직 담긴 지원이 없어요'}
                     </p>
-                    <Button to="/roadmap" state={{ step: step.stepOrder }} className={styles.cta}>
+                    <Button variant="accent" to="/roadmap" state={{ step: step.stepOrder }} className={styles.cta}>
                       {step.title} 살펴보기 <ArrowRight size={16} aria-hidden="true" />
                     </Button>
                   </div>
