@@ -48,10 +48,10 @@ export default function Home() {
             {profile.nickname}님, {completed === 0 ? '첫 걸음을 함께 시작해요' : '다음 걸음을 이어가요'}
           </h1>
           <p className={styles.description}>{stage}에 필요한 지원을 내 로드맵에서 하나씩 살펴보세요.</p>
+          <Link to="/settings" className={`${styles.link} ${styles.heroLink}`}>
+            맞춤 설정 변경 <ChevronRight size={16} aria-hidden="true" />
+          </Link>
         </div>
-        <Link to="/settings" className={styles.link}>
-          맞춤 설정 변경 <ChevronRight size={16} aria-hidden="true" />
-        </Link>
       </div>
 
       <div className={styles.columns}>

@@ -21,6 +21,9 @@
   --color-accent-strong: #D44E2A;
   --color-hero-from: #123A77;        /* 홈 히어로 그라데이션 */
   --color-hero-to: #3D6CC0;
+  --color-hero-ring: rgb(255 255 255 / 0.1);     /* 히어로 장식: 반투명 링 */
+  --color-hero-circle: #9C8BEA;                  /* 히어로 장식: 보라 원 */
+  --color-hero-stripe: rgb(147 197 253 / 0.45);  /* 히어로 장식: 사선 줄무늬 */
 
   /* 진행상태 배지: 글자 / 배경 */
   --st-to-check: #6A7282;    --st-to-check-bg: #F3F4F6;

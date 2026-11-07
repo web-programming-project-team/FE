@@ -8,10 +8,34 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-4);
+  position: relative;
+  isolation: isolate;
   padding: var(--space-10) var(--space-10) var(--space-8);
   border-radius: var(--radius-card);
-  background: linear-gradient(120deg, var(--color-hero-from), var(--color-hero-to));
+  /* 장식: 오른쪽 위 반투명 링, 오른쪽 아래 보라 원 (시흥시 하위 페이지 제목 블록 참고) */
+  background:
+    radial-gradient(circle at calc(100% - 260px) -30px, transparent 62px, var(--color-hero-ring) 63px 100px, transparent 101px),
+    radial-gradient(circle at calc(100% - 20px) calc(100% + 40px), var(--color-hero-circle) 0 115px, transparent 116px),
+    linear-gradient(120deg, var(--color-hero-from), var(--color-hero-to));
   color: var(--color-card);
+  overflow: hidden;
+}
+
+/* 장식: 보라 원과 겹치는 사선 줄무늬 원 */
+.head::after {
+  content: "";
+  position: absolute;
+  right: 70px;
+  bottom: -90px;
+  z-index: -1;
+  width: 170px;
+  height: 170px;
+  border-radius: var(--radius-pill);
+  background: repeating-linear-gradient(-45deg, var(--color-hero-stripe) 0 3px, transparent 3px 11px);
+}
+
+.heroLink {
+  margin-top: var(--space-5);
 }
 
 /* 히어로 안 글자는 배경 위에서 읽히도록 흰색 계열로 */
@@ -152,8 +176,8 @@
 .orderCurrent {
   width: 36px;
   height: 36px;
-  background: #CCFBF1;
-  color: var(--color-primary-strong);
+  background: var(--color-primary);
+  color: var(--color-card);
 }
 
 .row {
