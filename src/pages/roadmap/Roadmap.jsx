@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ArrowRight, Check, ChevronDown, ChevronRight, ChevronUp, ExternalLink, Route } from 'lucide-react'
+import { Check, ChevronDown, ChevronRight, ChevronUp, ExternalLink, Route } from 'lucide-react'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Collapse from '../../components/Collapse/Collapse.jsx'
 import PageHead from '../../components/PageHead/PageHead.jsx'
@@ -181,15 +181,6 @@ export default function Roadmap() {
         <aside className={styles.side}>
           <NextActions summary={summaryQuery.data} onStatusChange={changeStatus} />
           <UpcomingDeadlines summary={summaryQuery.data} />
-          <Link to="/jobs" className={styles.jobsBanner}>
-            <span>
-              <strong>
-                {summaryQuery.data?.newJobCount ? `새 맞춤 공고 ${summaryQuery.data.newJobCount}건` : '맞춤 채용공고'}
-              </strong>
-              <span>내 조건에 맞는 신입 공고를 확인해 보세요</span>
-            </span>
-            <ArrowRight size={18} aria-hidden="true" />
-          </Link>
         </aside>
       </div>
 

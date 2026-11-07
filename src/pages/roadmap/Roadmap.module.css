@@ -387,32 +387,6 @@
   color: var(--color-text-2);
 }
 
-.jobsBanner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-5) var(--space-6);
-  border-radius: var(--radius-card);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
-}
-
-.jobsBanner > span {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.jobsBanner strong {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-}
-
-.jobsBanner span span {
-  font-size: var(--fs-sm);
-  color: var(--color-text-2);
-}
-
 @media (max-width: 1024px) {
   .columns {
     grid-template-columns: minmax(0, 1fr);
