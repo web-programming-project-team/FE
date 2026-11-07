@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import Card from '../../components/Card/Card.jsx'
-import Slide from '../../components/Slide/Slide.jsx'
+import Collapse from '../../components/Collapse/Collapse.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
 import AsyncState from '../../components/AsyncState/AsyncState.jsx'
 import { Tag } from '../../components/Chip/Chip.jsx'
@@ -49,9 +49,9 @@ export default function MyRecords() {
                         {openId === r.roadmapId ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </span>
                     </button>
-                    <Slide open={openId === r.roadmapId}>
+                    <Collapse open={openId === r.roadmapId}>
                       <PastRoadmap roadmapId={r.roadmapId} />
-                    </Slide>
+                    </Collapse>
                   </li>
                 ))}
               </ul>

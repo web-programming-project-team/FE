@@ -23,7 +23,7 @@ const SORTS = {
 }
 
 export default function Community() {
-  const { profile, unreadCount, setNotificationOpen } = useAppState()
+  const { profile } = useAppState()
   const [posts, setPosts] = useState(initialReviews)
   const [tab, setTab] = useState('PROGRAM_REVIEW')
   const [policyFilter, setPolicyFilter] = useState('ALL')
@@ -66,14 +66,9 @@ export default function Community() {
         title="커뮤니티"
         description="먼저 경험한 청년의 이야기에서 다음 걸음의 힌트를 찾아보세요."
         actions={
-          <>
-            <button type="button" className={styles.noti} onClick={() => setNotificationOpen(true)}>
-              알림 <span>{unreadCount}</span>
-            </button>
-            <Button size="lg" onClick={() => setWriteOpen(true)}>
-              <Pencil size={16} aria-hidden="true" /> 1분 후기 쓰기
-            </Button>
-          </>
+          <Button variant="outline" size="lg" onClick={() => setWriteOpen(true)}>
+            <Pencil size={16} aria-hidden="true" /> 1분 후기 쓰기
+          </Button>
         }
       />
 

@@ -4,7 +4,8 @@
   --color-primary: #123A77;
   --color-primary-strong: #0B2A5B;   /* 강조 글자, 선택된 칩 글자 */
   --color-primary-soft: #F0F3FA;     /* 선택 배경, 안내 박스 */
-  --color-bg: #F7F9FC;               /* 바탕 위쪽(헤더) */
+  --color-bg: #F7F9FC;               /* 요소 안 마우스 올림 면 등 */
+  --color-bg-top: #FCFDFE;           /* 바탕 위쪽(헤더), 아래로 갈수록 --color-bg-deep */
   --color-bg-deep: #F1F4F9;          /* 바탕 아래쪽(요소 영역), 흰 요소 안의 입력·칩 면 */
   --color-selected: #E1E9F7;         /* 선택된 체크·라디오 항목 면 */
   --color-card: #FFFFFF;
@@ -23,16 +24,21 @@
   --color-accent-strong: #D03910;    /* 마우스 올렸을 때 */
   --color-hero-from: #123A77;        /* 홈 히어로 그라데이션 */
   --color-hero-to: #3D6CC0;
+  --color-head-from: var(--color-hero-from);   /* 메뉴별 상단 박스: 홈 히어로와 같은 그라데이션 */
+  --color-head-to: var(--color-hero-to);
+  --color-head-ring: rgb(255 255 255 / 0.14);   /* 상단 박스 장식: 흰 링 */
+  --color-head-dot: rgb(255 255 255 / 0.3);     /* 상단 박스 장식: 점 무늬 */
+  --color-on-head-soft: rgb(255 255 255 / 0.18); /* 상단 박스 위 아이콘 원·구분선 */
   --color-hero-ring: rgb(255 255 255 / 0.1);     /* 히어로 장식: 반투명 링 */
   --color-hero-circle: #9C8BEA;                  /* 히어로 장식: 보라 원 */
   --color-hero-stripe: rgb(147 197 253 / 0.45);  /* 히어로 장식: 사선 줄무늬 */
 
-  /* 진행상태 배지: 글자 / 배경 */
-  --st-to-check: #6A7282;    --st-to-check-bg: #F3F4F6;
+  /* 진행상태 배지: 글자 / 배경. 시작 전은 회색, 신청부터 진행 중까지 주황이 점점 진해짐, 완료는 회색 */
+  --st-to-check: var(--color-text-3); --st-to-check-bg: #F3F4F6;   /* 대비 7:1 */
   --st-interested: #364153;  --st-interested-bg: #F3F4F6;
-  --st-planned: #123A77;     --st-planned-bg: #F0F3FA;
-  --st-applied: #07589A;     --st-applied-bg: #DDE8F7;
-  --st-in-progress: #16A34A; --st-in-progress-bg: #ECFDF3;
+  --st-planned: #B23A12;     --st-planned-bg: #FFF1EB;    /* 대비 5.4:1 */
+  --st-applied: #A8360F;     --st-applied-bg: #FFE3D7;    /* 대비 5.4:1 */
+  --st-in-progress: var(--color-card); --st-in-progress-bg: var(--color-accent-strong);   /* 흰 글자 대비 4.9:1 */
   --st-completed: #364153;   --st-completed-bg: #E5E7EB;
 
   /* 캘린더 일정 종류 점 */

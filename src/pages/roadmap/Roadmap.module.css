@@ -7,70 +7,98 @@
   color: var(--color-text-3);
 }
 
-/* 상단 요약 카드 */
-.summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6);
+.progressBox .muted {
+  color: inherit;   /* 파랑 상단 박스 안에서는 흰색 */
 }
 
-.summaryMain {
-  flex: 1 1 480px;
-  display: grid;
-  gap: var(--space-4);
-}
-
-.greeting {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6);
-}
-
-.title {
-  font-size: var(--fs-2xl);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
+/* 상단 박스 아래 "상황 바꾸기" */
 .changeLink {
   display: inline-flex;
+  flex: none;
   align-items: center;
-  gap: var(--space-0-5);
+  gap: var(--space-1);
+  height: 40px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--control-bg);
   font-size: var(--fs-sm);
-  font-weight: 400;
-  color: var(--color-text-3);
+  font-weight: 700;
+  color: var(--color-primary-strong);
 }
 
 .changeLink:hover {
-  color: var(--color-text);
+  filter: brightness(0.97);
 }
 
-.profileRow {
+/* 상단 박스 아래 내 상황 줄 */
+.situation {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  font-size: var(--fs-sm);
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  --control-bg: var(--color-bg-deep);
 }
 
-.stagePill {
+.situationList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-8);
+  margin: 0;
+}
+
+.situationList > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.situationList dt {
+  margin-right: var(--space-1);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.situationList dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+/* 내 상황 값: 현재 상황은 남색 채움, 관심분야는 연한 남색 */
+.situationList dd span {
+  display: inline-flex;
+  align-items: center;
   height: 36px;
-  padding: 0 var(--space-4);
+  padding-inline: var(--space-4);
   border-radius: var(--radius-pill);
-  background: var(--color-fill);
-  font-weight: 400;
-  line-height: 36px;
-  color: var(--color-text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.stages span {
+  background: var(--color-primary);
+  color: var(--color-card);
+}
+
+.interests span {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
 }
 
 .progressBox {
-  flex: 0 1 368px;
+  width: 368px;
+  max-width: 100%;
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
   padding-left: var(--space-6);
-  border-left: 1px solid var(--color-line);
+  border-left: 1px solid var(--color-on-head-soft);
 }
 
 .progressHead {
@@ -79,14 +107,12 @@
   justify-content: space-between;
   font-size: var(--fs-sm);
   font-weight: 400;
-  color: var(--color-text-2);
 }
 
 .rate {
-  font-size: var(--fs-4xl);
+  font-size: var(--fs-3xl);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--color-primary-strong);
 }
 
 .rate small {
@@ -96,7 +122,7 @@
 .bar {
   height: 8px;
   border-radius: var(--radius-pill);
-  background: var(--color-fill);
+  background: var(--color-card);
   overflow: hidden;
 }
 
@@ -110,8 +136,7 @@
   display: flex;
   justify-content: space-between;
   gap: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--color-text-2);
+  font-size: var(--fs-xs);
 }
 
 .progressFoot .muted {
@@ -394,18 +419,15 @@
   }
 
   .progressBox {
-    flex-basis: 100%;
+    width: 100%;
     padding-left: 0;
     padding-top: var(--space-5);
     border-left: 0;
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid var(--color-on-head-soft);
   }
 }
 
 @media (max-width: 560px) {
-  .title {
-    font-size: var(--fs-xl);
-  }
 
   .step {
     padding-left: calc(var(--space-10) + var(--space-1));

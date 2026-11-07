@@ -6,7 +6,8 @@
   gap: var(--space-10);
   height: var(--header-height);
   padding-inline: var(--space-10);
-  background: var(--color-bg);
+  background: var(--color-bg-top);
+  --control-bg: var(--color-bg-deep);   /* 거의 흰 헤더 위 검색창은 연회색 면 */
 }
 
 .nav {

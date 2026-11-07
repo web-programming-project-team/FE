@@ -1,13 +1,45 @@
 .head {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-5);
   justify-self: stretch;
+  min-height: 140px;   /* 메뉴마다 상단 박스 높이 통일 (로드맵 진행률 영역 기준) */
   padding: var(--space-7) var(--space-8);
   border-radius: var(--radius-card);
-  background: var(--color-card);
-  --control-bg: var(--color-bg-deep);
+  /* 장식: 오른쪽 아래 걸친 흰 링, 오른쪽 위 작은 보라 점 (홈 히어로와 같은 계열, 더 옅게) */
+  background:
+    radial-gradient(circle at calc(100% - 120px) calc(100% + 40px), transparent 70px, var(--color-head-ring) 71px 96px, transparent 97px),
+    radial-gradient(circle at calc(100% - 290px) 26px, var(--color-hero-circle) 0 9px, transparent 10px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+  --control-bg: var(--color-card);   /* 파랑 위의 버튼은 흰 면 */
+  color: var(--color-card);
+  overflow: hidden;
+}
+
+/* 장식: 링 옆 점 무늬 */
+.head::after {
+  content: "";
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-8);
+  z-index: -1;
+  width: 112px;
+  height: 64px;
+  background: radial-gradient(var(--color-head-dot) 2px, transparent 2.5px) 0 0 / 16px 16px;
+  mask-image: linear-gradient(to left, var(--color-text), transparent);   /* 오른쪽에서 왼쪽으로 사라짐 */
+}
+
+.quiet {
+  background:
+    radial-gradient(circle at calc(100% - 120px) calc(100% + 40px), transparent 70px, var(--color-head-ring) 71px 96px, transparent 97px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+.quiet::after {
+  content: none;
 }
 
 .icon {
@@ -17,8 +49,8 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-pill);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  background: var(--color-on-head-soft);
+  color: var(--color-card);
 }
 
 .text {
@@ -30,13 +62,13 @@
   font-size: var(--fs-3xl);
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--color-primary-strong);
+  color: var(--color-card);
 }
 
 .description {
   margin-top: var(--space-1);
   font-size: var(--fs-base);
-  color: var(--color-text-2);
+  color: var(--color-card);
 }
 
 .actions {

@@ -4,7 +4,7 @@ import { ArrowRight, Bookmark, Briefcase, ChevronDown, ChevronRight, ChevronUp, 
 import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
-import Slide from '../../components/Slide/Slide.jsx'
+import Collapse from '../../components/Collapse/Collapse.jsx'
 import Select from '../../components/Select/Select.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
@@ -76,7 +76,7 @@ export default function Jobs() {
         >
           조건 수정 {filterOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
-        <Slide open={filterOpen}>
+        <Collapse open={filterOpen}>
           <JobFilter
             regions={regions}
             jobCategories={jobCategories}
@@ -85,7 +85,7 @@ export default function Jobs() {
             // PATCH /users/me/job-preference (보낸 필드만 바뀜)
             onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
           />
-        </Slide>
+        </Collapse>
       </header>
 
       <div className={styles.columns}>
@@ -157,7 +157,7 @@ function JobCard({ job }) {
           <span className={styles.divider} aria-hidden="true" />
           {formatDot(job.deadline)} 마감
         </p>
-        <Button variant="outline" href={job.originalUrl}>
+        <Button variant="accent" href={job.originalUrl}>
           공식 사이트 <ExternalLink size={14} aria-hidden="true" />
         </Button>
       </div>

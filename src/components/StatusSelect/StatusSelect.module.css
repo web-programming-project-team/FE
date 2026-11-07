@@ -66,6 +66,11 @@
   background: currentColor;
 }
 
+/* 진행 중은 글자가 흰색이라 점은 배경색(주황)으로 */
+.swatch.inProgress {
+  background: var(--st-in-progress-bg);
+}
+
 .check {
   margin-left: auto;
   color: var(--color-primary-strong);
