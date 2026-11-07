@@ -62,6 +62,7 @@ export default function Community() {
   return (
     <div className={styles.page}>
       <PageHead
+        decor="community"
         icon={MessagesSquare}
         title="커뮤니티"
         description="먼저 경험한 청년의 이야기에서 다음 걸음의 힌트를 찾아보세요."

@@ -41,7 +41,7 @@ export default function Policies() {
 
   return (
     <div className={styles.page}>
-      <PageHead icon={ScrollText} title="지원정보" description="시흥 청년이 신청할 수 있는 정책과 프로그램을 모았어요." />
+      <PageHead decor="policies" icon={ScrollText} title="지원정보" description="시흥 청년이 신청할 수 있는 정책과 프로그램을 모았어요." />
 
       <div className={styles.toolbar}>
         <div className={styles.chips} role="group" aria-label="분야">

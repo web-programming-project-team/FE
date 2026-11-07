@@ -71,6 +71,7 @@ export default function Calendar() {
   return (
     <div className={styles.page}>
       <PageHead
+        decor="calendar"
         icon={CalendarDays}
         title="NEXT 캘린더"
         description="준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요."

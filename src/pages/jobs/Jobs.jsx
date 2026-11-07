@@ -56,7 +56,7 @@ export default function Jobs() {
 
   return (
     <div className={styles.page}>
-      <PageHead icon={Briefcase} title="맞춤 채용" description="내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요." />
+      <PageHead decor="jobs" icon={Briefcase} title="맞춤 채용" description="내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요." />
 
       <div className={styles.columns}>
         <div className={styles.main}>
