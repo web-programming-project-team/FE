@@ -7,10 +7,11 @@ import { useAppState } from '../../context/AppState.jsx'
 import styles from './Header.module.css'
 import Slide from '../Slide/Slide.jsx'
 
-// 메뉴는 4개로 고정 (제안서 5-5). 홈은 로고로 이동한다.
+// 메뉴는 5개로 고정. 홈은 로고로 이동한다.
 const MENUS = [
   { to: '/roadmap', label: '내 로드맵' },
   { to: '/jobs', label: '맞춤 채용' },
+  { to: '/policies', label: '지원정보' },
   { to: '/community', label: '커뮤니티' },
   { to: '/calendar', label: 'NEXT 캘린더' },
 ]

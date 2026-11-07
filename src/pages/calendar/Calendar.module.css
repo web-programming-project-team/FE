@@ -8,31 +8,6 @@
   color: var(--color-text-3);
 }
 
-.notiButton {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  height: 44px;
-  padding-inline: var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--control-bg);
-  font-size: var(--fs-sm);
-  font-weight: 400;
-  color: var(--color-text-2);
-}
-
-.notiButton span {
-  display: grid;
-  place-items: center;
-  min-width: 20px;
-  height: 20px;
-  border-radius: var(--radius-pill);
-  background: var(--color-danger-soft);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--color-danger);
-}
-
 .columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--side-width);
