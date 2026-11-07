@@ -21,9 +21,8 @@
   width: 100%;
   height: 44px;
   padding-inline: var(--space-3);
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
-  background: var(--color-card);
+  background: var(--control-bg);
   font-size: var(--fs-md);
   font-weight: 400;
   color: var(--color-text);
@@ -31,11 +30,11 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
 }
 
 .input[aria-invalid='true'] {
-  border-color: var(--color-danger);
+  box-shadow: inset 0 0 0 2px var(--color-danger);
 }
 
 .error {

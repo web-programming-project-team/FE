@@ -6,7 +6,8 @@
   justify-self: stretch;
   padding: var(--space-7) var(--space-8);
   border-radius: var(--radius-card);
-  background: var(--color-primary-soft);
+  background: var(--color-card);
+  --control-bg: var(--color-bg-deep);
 }
 
 .icon {
@@ -16,7 +17,7 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-pill);
-  background: var(--color-card);
+  background: var(--color-primary-soft);
   color: var(--color-primary);
 }
 

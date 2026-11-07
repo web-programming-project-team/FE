@@ -6,7 +6,8 @@
 
 body {
   margin: 0;
-  background: var(--color-bg);
+  /* 위쪽(헤더)은 --color-bg, 요소가 시작되는 아래는 --color-bg-deep */
+  background: linear-gradient(var(--color-bg) var(--header-height), var(--color-bg-deep) calc(var(--header-height) + 240px)) no-repeat var(--color-bg-deep);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--fs-md);
@@ -37,6 +38,7 @@ select,
 textarea {
   font: inherit;
   color: inherit;
+  border: 0;   /* 경계선 대신 면 색으로 구분 (--control-bg) */
 }
 
 button {

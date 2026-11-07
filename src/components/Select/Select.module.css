@@ -14,20 +14,19 @@
   min-width: 120px;
   height: 44px;
   padding-inline: var(--space-3);
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
-  background: var(--color-card);
+  background: var(--control-bg);
   font-size: var(--fs-sm);
   color: var(--color-text-2);
   text-align: left;
 }
 
 .trigger:hover {
-  border-color: var(--color-text-4);
+  filter: brightness(0.97);
 }
 
 .trigger[aria-expanded='true'] {
-  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
 }
 
 .value {
@@ -55,7 +54,6 @@
   max-height: 280px;
   overflow-y: auto;
   padding: var(--space-1);
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-card);
   box-shadow: var(--shadow-pop);

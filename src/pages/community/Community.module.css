@@ -59,7 +59,7 @@
 /* 필터 */
 .filter {
   position: sticky;
-  top: calc(var(--header-height) + var(--space-6));
+  top: var(--space-6);
 }
 
 .filterHead {
@@ -145,7 +145,6 @@
   min-width: 0;
   height: 32px;
   padding-inline: var(--space-2);
-  border-color: transparent;
   background: transparent;
   font-weight: 700;
   color: var(--color-text);
@@ -204,7 +203,6 @@
   width: 128px;
   height: 52px;
   padding-inline: var(--space-4);
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-card);
   box-shadow: var(--shadow-pop);

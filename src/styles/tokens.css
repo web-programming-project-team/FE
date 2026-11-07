@@ -4,9 +4,11 @@
   --color-primary: #123A77;
   --color-primary-strong: #0B2A5B;   /* 강조 글자, 선택된 칩 글자 */
   --color-primary-soft: #F0F3FA;     /* 선택 배경, 안내 박스 */
-  --color-bg: #F7F9FC;
+  --color-bg: #F7F9FC;               /* 바탕 위쪽(헤더) */
+  --color-bg-deep: #F1F4F9;          /* 바탕 아래쪽(요소 영역), 흰 요소 안의 입력·칩 면 */
+  --color-selected: #E1E9F7;         /* 선택된 체크·라디오 항목 면 */
   --color-card: #FFFFFF;
-  --color-line: #C9D1DE;             /* 카드 테두리, 흰 배경 대비 1.5:1 */
+  --color-line: #EAEDF3;             /* 요소 안 구분선·캘린더 격자 전용 (바깥 테두리는 쓰지 않음) */
   --color-fill: #F3F4F6;             /* 중립 배지·칩 배경 */
   --color-text: #101828;
   --color-text-2: #364153;
@@ -80,6 +82,9 @@
   --header-height: 76px;
   --container-width: 1200px;
   --side-width: 384px;
+
+  /* 입력·칩·테두리형 버튼의 면 색: 바탕 위에서는 흰색, 흰 요소 안에서는 --color-bg-deep (요소가 덮어씀) */
+  --control-bg: var(--color-card);
 
   --font-sans: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 }
