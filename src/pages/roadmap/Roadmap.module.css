@@ -19,15 +19,17 @@
   gap: var(--space-1);
   height: 40px;
   padding-inline: var(--space-4);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
-  background: var(--control-bg);
+  background: var(--color-card);
   font-size: var(--fs-sm);
   font-weight: 700;
-  color: var(--color-primary-strong);
+  color: var(--color-text-2);
 }
 
 .changeLink:hover {
-  filter: brightness(0.97);
+  border-color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 /* 상단 박스 아래 내 상황 줄 */
@@ -36,7 +38,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-4) var(--space-6);
   padding: var(--space-5) var(--space-6);
   border-radius: var(--radius-card);
   background: var(--color-card);
@@ -46,19 +48,21 @@
 .situationList {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) var(--space-8);
+  gap: var(--space-4) var(--space-6);
   margin: 0;
 }
 
+.situationList > div + div {
+  padding-left: var(--space-6);
+  border-left: 1px solid var(--color-line);
+}
+
 .situationList > div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  display: grid;
   gap: var(--space-2);
 }
 
 .situationList dt {
-  margin-right: var(--space-1);
   font-size: var(--fs-base);
   font-weight: 700;
   color: var(--color-text);
@@ -75,21 +79,21 @@
 .situationList dd span {
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding-inline: var(--space-4);
+  height: 32px;
+  padding-inline: var(--space-3);
   border-radius: var(--radius-pill);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .stages span {
-  background: var(--color-primary);
-  color: var(--color-card);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
 }
 
 .interests span {
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
+  background: var(--color-bg-deep);
+  color: var(--color-text-2);
 }
 
 .progressBox {
