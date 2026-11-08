@@ -48,10 +48,10 @@ export default function Home() {
             {profile.nickname}님, {completed === 0 ? '첫 걸음을 함께 시작해요' : '다음 걸음을 이어가요'}
           </h1>
           <p className={styles.description}>{stage}에 필요한 지원을 내 로드맵에서 하나씩 살펴보세요.</p>
+          <Link to="/settings" className={`${styles.link} ${styles.heroLink}`}>
+            맞춤 설정 변경 <ChevronRight size={16} aria-hidden="true" />
+          </Link>
         </div>
-        <Link to="/settings" className={styles.link}>
-          맞춤 설정 변경 <ChevronRight size={16} aria-hidden="true" />
-        </Link>
       </div>
 
       <div className={styles.columns}>
@@ -92,7 +92,7 @@ export default function Home() {
                     <p className={styles.currentBody}>
                       {step.items.length > 0 ? step.items.map((i) => i.title).join(' · ') : '아직 담긴 지원이 없어요'}
                     </p>
-                    <Button to="/roadmap" state={{ step: step.stepOrder }} className={styles.cta}>
+                    <Button variant="accent" to="/roadmap" state={{ step: step.stepOrder }} className={styles.cta}>
                       {step.title} 살펴보기 <ArrowRight size={16} aria-hidden="true" />
                     </Button>
                   </div>

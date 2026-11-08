@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bell, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
@@ -8,7 +9,6 @@ import AsyncState from '../../components/AsyncState/AsyncState.jsx'
 import { EVENT_TYPE } from '../../constants/enumLabels.js'
 import { calendarApi } from '../../api/index.js'
 import { useApi } from '../../hooks/useApi.js'
-import { useAppState } from '../../context/AppState.jsx'
 import { formatDot, formatShort, formatTime, parseDate, toIso, today, weekdayOf } from '../../utils/date.js'
 import styles from './Calendar.module.css'
 
@@ -40,7 +40,6 @@ function monthGrid(year, month) {
 
 // NEXT 캘린더: 월별 일정(GET /calendar/events) + 다가오는 7일 마감(GET /calendar/events/upcoming)
 export default function Calendar() {
-  const { unreadCount, setNotificationOpen } = useAppState()
   const [selected, setSelected] = useState(() => toIso(today()))
   const [view, setView] = useState(() => {
     const d = today()
@@ -71,15 +70,12 @@ export default function Calendar() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.title}>NEXT 캘린더</h1>
-          <p className={styles.description}>준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요.</p>
-        </div>
-        <button type="button" className={styles.notiButton} onClick={() => setNotificationOpen(true)}>
-          <Bell size={16} aria-hidden="true" /> 알림 {unreadCount > 0 && <span>{unreadCount}</span>}
-        </button>
-      </header>
+      <PageHead
+        decor="calendar"
+        icon={CalendarDays}
+        title="NEXT 캘린더"
+        description="준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요."
+      />
 
       <div className={styles.columns}>
         <Card className={styles.calendar}>
@@ -139,7 +135,7 @@ export default function Calendar() {
                       {dayEvents.map((e) => (
                         <span key={e.eventId} className={styles.cellEvent}>
                           <span className={`${styles.dot} ${styles.small} ${DOT[e.type]}`} aria-hidden="true" />
-                          {e.title}
+                          <span className={styles.cellTitle}>{e.title}</span>
                         </span>
                       ))}
                     </span>

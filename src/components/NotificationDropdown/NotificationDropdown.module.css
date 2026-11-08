@@ -6,10 +6,10 @@
   width: min(380px, calc(100vw - var(--space-8)));
   max-height: calc(100vh - var(--header-height) - var(--space-6));
   overflow-y: auto;
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-card);
   box-shadow: var(--shadow-pop);
+  --control-bg: var(--color-bg-deep);   /* 흰 요소 안의 입력·칩은 연회색 면 */
 }
 
 .head {
@@ -24,7 +24,7 @@
   align-items: center;
   gap: var(--space-2);
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .count {
@@ -60,14 +60,14 @@
 .tab {
   padding: var(--space-2) var(--space-1);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
   border-bottom: 2px solid transparent;
 }
 
 .tabActive {
   color: var(--color-primary-strong);
-  font-weight: 600;
+  font-weight: 700;
   border-bottom-color: var(--color-primary);
 }
 
@@ -117,7 +117,7 @@
 
 .itemTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 

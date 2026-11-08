@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Ellipsis, Heart, Pencil } from 'lucide-react'
+import { Ellipsis, Heart, MessagesSquare, Pencil } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Select from '../../components/Select/Select.jsx'
 import Toggle from '../../components/Toggle/Toggle.jsx'
 import { Chip, Tag } from '../../components/Chip/Chip.jsx'
 import { Stars } from '../../components/Stars/Stars.jsx'
@@ -21,7 +23,7 @@ const SORTS = {
 }
 
 export default function Community() {
-  const { profile, unreadCount, setNotificationOpen } = useAppState()
+  const { profile } = useAppState()
   const [posts, setPosts] = useState(initialReviews)
   const [tab, setTab] = useState('PROGRAM_REVIEW')
   const [policyFilter, setPolicyFilter] = useState('ALL')
@@ -59,20 +61,17 @@ export default function Community() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.title}>커뮤니티</h1>
-          <p className={styles.description}>먼저 경험한 청년의 이야기에서 다음 걸음의 힌트를 찾아보세요.</p>
-        </div>
-        <div className={styles.headActions}>
-          <button type="button" className={styles.noti} onClick={() => setNotificationOpen(true)}>
-            알림 <span>{unreadCount}</span>
-          </button>
-          <Button size="lg" onClick={() => setWriteOpen(true)}>
+      <PageHead
+        decor="community"
+        icon={MessagesSquare}
+        title="커뮤니티"
+        description="먼저 경험한 청년의 이야기에서 다음 걸음의 힌트를 찾아보세요."
+        actions={
+          <Button variant="outline" size="lg" onClick={() => setWriteOpen(true)}>
             <Pencil size={16} aria-hidden="true" /> 1분 후기 쓰기
           </Button>
-        </div>
-      </header>
+        }
+      />
 
       <div className={styles.tabs} role="tablist">
         {Object.entries(POST_TYPE).map(([key, label]) => (
@@ -139,14 +138,16 @@ export default function Community() {
             <h2 id="post-list-title" className={styles.count}>
               {POST_TYPE[tab]} <b>{list.length}</b>개
             </h2>
-            <label className={styles.sortLabel}>
-              정렬
-              <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                {Object.entries(SORTS).map(([key, s]) => (
-                  <option key={key} value={key}>{s.label}</option>
-                ))}
-              </select>
-            </label>
+            <div className={styles.sortLabel}>
+              <span aria-hidden="true">정렬</span>
+              <Select
+                label="정렬"
+                className={styles.sortSelect}
+                value={sort}
+                onChange={setSort}
+                options={Object.entries(SORTS).map(([key, s]) => [key, s.label])}
+              />
+            </div>
           </div>
 
           {list.length === 0 ? (

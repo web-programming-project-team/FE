@@ -7,16 +7,33 @@
   color: var(--color-text-3);
 }
 
-.back {
-  display: inline-flex;
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1-5);
-  justify-self: start;
+  gap: var(--space-2);
   font-size: var(--fs-sm);
   color: var(--color-text-3);
 }
 
-.back:hover {
+/* 구분자 ">" (스크린리더는 읽지 않음) */
+.breadcrumb li + li::before {
+  content: ">" / "";
+  margin-right: var(--space-2);
+  color: var(--color-line);
+}
+
+.breadcrumb a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.breadcrumb a:hover {
+  color: var(--color-text);
+}
+
+.breadcrumb [aria-current] {
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -93,7 +110,7 @@
   gap: var(--space-1-5);
   justify-self: start;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-primary-strong);
 }
 
@@ -106,7 +123,7 @@
 
 .sectionTitle {
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .more {
@@ -133,7 +150,7 @@
 .reviewTitle {
   min-height: 3em;
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.6;
 }
 
@@ -144,7 +161,7 @@
 
 .reviewMeta b {
   margin-left: var(--space-1);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-2);
 }
 
@@ -168,7 +185,7 @@
 
 .jobTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .jobMeta {
@@ -183,7 +200,7 @@
 /* 오른쪽 진행상태 카드 */
 .side {
   position: sticky;
-  top: calc(var(--header-height) + var(--space-6));
+  top: var(--space-6);
   display: grid;
   gap: var(--space-6);
 }
@@ -198,7 +215,7 @@
 
 .sideTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dday {

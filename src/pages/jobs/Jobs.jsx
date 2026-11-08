@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Bookmark, ChevronDown, ChevronRight, ChevronUp } from 'lucide-react'
+import { ArrowRight, Bookmark, Briefcase, ChevronDown, ChevronRight, ChevronUp } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Collapse from '../../components/Collapse/Collapse.jsx'
+import Select from '../../components/Select/Select.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
 import AsyncState from '../../components/AsyncState/AsyncState.jsx'
@@ -49,72 +52,74 @@ export default function Jobs() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>맞춤 채용</h1>
-        <p className={styles.description}>내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요.</p>
-        <div className={styles.conditions}>
-          {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
-          {education && <Tag tone="outline">{EDUCATION[education]}</Tag>}
-          <Tag tone="outline">신입</Tag>
-          {categoryLabel && <Tag tone="outline">{categoryLabel}</Tag>}
-          {employmentLabel && <Tag tone="outline">{employmentLabel}</Tag>}
-          {graduating && education === 'UNIVERSITY' && (
-            <span className={styles.note}>대졸은 {LIFE_STAGE.GRADUATING} 포함</span>
-          )}
-        </div>
-        <button
-          type="button"
-          className={styles.filterToggle}
-          aria-expanded={filterOpen}
-          onClick={() => setFilterOpen(!filterOpen)}
-        >
-          조건 수정 {filterOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-        {filterOpen && (
-          <JobFilter
-            regions={regions}
-            jobCategories={jobCategories}
-            education={education}
-            employmentTypes={employmentTypes}
-            // PATCH /users/me/job-preference (보낸 필드만 바뀜) → profile이 바뀌면 목록을 다시 받는다
-            onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
-          />
-        )}
-      </header>
+      <PageHead decor="jobs" icon={Briefcase} title="맞춤 채용" description="내 조건에 맞는 공고와 취업 준비에 도움 되는 지원을 함께 확인해요." />
 
       <div className={styles.columns}>
-        <section aria-label="채용공고">
-          <div className={styles.tabs} role="tablist">
+        <div className={styles.main}>
+          <header className={styles.head}>
+            <div className={styles.conditions}>
+              {regionLabel && <Tag tone="outline">{regionLabel}</Tag>}
+              {education && <Tag tone="outline">{EDUCATION[education]}</Tag>}
+              <Tag tone="outline">신입</Tag>
+              {categoryLabel && <Tag tone="outline">{categoryLabel}</Tag>}
+              {employmentLabel && <Tag tone="outline">{employmentLabel}</Tag>}
+              {graduating && education === 'UNIVERSITY' && (
+                <span className={styles.note}>대졸은 {LIFE_STAGE.GRADUATING} 포함</span>
+              )}
+            </div>
             <button
               type="button"
-              role="tab"
-              aria-selected={tab === 'recommended'}
-              className={`${styles.tab} ${tab === 'recommended' ? styles.tabActive : ''}`}
-              onClick={() => setTab('recommended')}
+              className={styles.filterToggle}
+              aria-expanded={filterOpen}
+              onClick={() => setFilterOpen(!filterOpen)}
             >
-              맞춤 공고
+              조건 수정 {filterOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === 'bookmarks'}
-              className={`${styles.tab} ${tab === 'bookmarks' ? styles.tabActive : ''}`}
-              onClick={() => setTab('bookmarks')}
-            >
-              관심 공고 {bookmarkCount !== null && <span>{bookmarkCount}</span>}
-            </button>
-          </div>
+            <Collapse open={filterOpen}>
+              <JobFilter
+                regions={regions}
+                jobCategories={jobCategories}
+                education={education}
+                employmentTypes={employmentTypes}
+                // PATCH /users/me/job-preference (보낸 필드만 바뀜) → profile이 바뀌면 목록을 다시 받는다
+                onChange={(patch) => updateJobPreference(patch).catch((err) => window.alert(err.message))}
+              />
+            </Collapse>
+          </header>
 
-          {tab === 'recommended' ? (
-            <RecommendedList
-              sort={sort}
-              onSortChange={setSort}
-              preferenceKey={JSON.stringify(profile.jobPreference)}
-            />
-          ) : (
-            <BookmarkList onCount={setBookmarkCount} />
-          )}
-        </section>
+          <section aria-label="채용공고">
+            <div className={styles.tabs} role="tablist">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === 'recommended'}
+                className={`${styles.tab} ${tab === 'recommended' ? styles.tabActive : ''}`}
+                onClick={() => setTab('recommended')}
+              >
+                맞춤 공고
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === 'bookmarks'}
+                className={`${styles.tab} ${tab === 'bookmarks' ? styles.tabActive : ''}`}
+                onClick={() => setTab('bookmarks')}
+              >
+                관심 공고 {bookmarkCount !== null && <span>{bookmarkCount}</span>}
+              </button>
+            </div>
+
+            {tab === 'recommended' ? (
+              <RecommendedList
+                sort={sort}
+                onSortChange={setSort}
+                preferenceKey={JSON.stringify(profile.jobPreference)}
+              />
+            ) : (
+              <BookmarkList onCount={setBookmarkCount} />
+            )}
+          </section>
+        </div>
 
         <aside className={styles.side}>
           <PassReviews />
@@ -189,14 +194,7 @@ function RecommendedList({ sort, onSortChange, preferenceKey }) {
           맞춤 공고 <span>{list.total}</span>
           <small>잡아바·관리자 등록 공고 기준</small>
         </h2>
-        <label>
-          <span className="sr-only">정렬</span>
-          <select className={styles.sort} value={sort} onChange={(e) => onSortChange(e.target.value)}>
-            {Object.entries(SORTS).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
-        </label>
+        <Select label="정렬" value={sort} onChange={onSortChange} options={Object.entries(SORTS)} />
       </div>
       <p className={styles.listNote}>공고 확인과 입사 지원은 공식 사이트에서 진행돼요.</p>
 
@@ -251,7 +249,7 @@ function JobCard({ job, onToggleBookmark, onChangeStatus }) {
           <span className={styles.divider} aria-hidden="true" />
           {job.deadline ? `${formatDot(job.deadline)} 마감` : '상시채용'}
         </p>
-        <Button variant="outline" to={`/jobs/${job.jobId}`}>
+        <Button variant="accent" to={`/jobs/${job.jobId}`}>
           자세히 <ChevronRight size={14} aria-hidden="true" />
         </Button>
       </div>

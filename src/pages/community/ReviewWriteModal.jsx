@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ShieldCheck } from 'lucide-react'
 import Modal from '../../components/Modal/Modal.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Select from '../../components/Select/Select.jsx'
 import { Chip, ChipGroup } from '../../components/Chip/Chip.jsx'
 import { StarInput } from '../../components/Stars/Stars.jsx'
 import { PREP_PERIOD } from '../../constants/enumLabels.js'
@@ -55,18 +56,16 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
   return (
     <Modal open onClose={onClose} width={560} title="1분 후기 쓰기" description="나의 경험이 다음 청년의 준비에 도움이 돼요.">
       <form className={styles.form} onSubmit={submit} noValidate>
-        <label className={styles.field}>
+        <div className={styles.field}>
           <span className={styles.label}>연결할 정책·공고</span>
-          <select
+          <Select
+            label="연결할 정책·공고"
             className={styles.input}
             value={form.policyId}
-            onChange={(e) => set('policyId', Number(e.target.value))}
-          >
-            {sorted.map((p) => (
-              <option key={p.policyId} value={p.policyId}>{p.title}</option>
-            ))}
-          </select>
-        </label>
+            onChange={(v) => set('policyId', v)}
+            options={sorted.map((p) => [p.policyId, p.title])}
+          />
+        </div>
 
         <div className={styles.field}>
           <span className={styles.label}>참여 경험은 어땠나요?</span>

@@ -8,12 +8,55 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-4);
+  position: relative;
+  isolation: isolate;
+  padding: var(--space-10) var(--space-10) var(--space-8);
+  border-radius: var(--radius-card);
+  /* 장식: 오른쪽 위 반투명 링, 오른쪽 아래 보라 원 (시흥시 하위 페이지 제목 블록 참고) */
+  background:
+    radial-gradient(circle at calc(100% - 260px) -30px, transparent 62px, var(--color-hero-ring) 63px 100px, transparent 101px),
+    radial-gradient(circle at calc(100% - 20px) calc(100% + 40px), var(--color-hero-circle) 0 115px, transparent 116px),
+    linear-gradient(120deg, var(--color-hero-from), var(--color-hero-to));
+  color: var(--color-card);
+  overflow: hidden;
+}
+
+/* 장식: 보라 원과 겹치는 사선 줄무늬 원 */
+.head::after {
+  content: "";
+  position: absolute;
+  right: 70px;
+  bottom: -90px;
+  z-index: -1;
+  width: 170px;
+  height: 170px;
+  border-radius: var(--radius-pill);
+  background: repeating-linear-gradient(-45deg, var(--color-hero-stripe) 0 3px, transparent 3px 11px);
+}
+
+.heroLink {
+  margin-top: var(--space-5);
+}
+
+/* 히어로 안 글자는 배경 위에서 읽히도록 흰색 계열로 */
+.head .eyebrow {
+  color: var(--color-primary-soft);
+}
+
+.head .description,
+.head .link,
+.head .link:hover {
+  color: var(--color-card);
+}
+
+.head .link:hover {
+  text-decoration: underline;
 }
 
 .eyebrow,
 .startHere {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primary-strong);
 }
 
@@ -37,7 +80,7 @@
   align-items: center;
   gap: var(--space-1);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-2);
   white-space: nowrap;
 }
@@ -105,7 +148,7 @@
 .currentTitle {
   margin-top: var(--space-1);
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .currentBody {
@@ -126,15 +169,15 @@
   border-radius: var(--radius-pill);
   background: var(--color-fill);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
 .orderCurrent {
   width: 36px;
   height: 36px;
-  background: #CCFBF1;
-  color: var(--color-primary-strong);
+  background: var(--color-primary);
+  color: var(--color-card);
 }
 
 .row {
@@ -175,7 +218,7 @@
 
 .sideTitle {
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .edit {
@@ -193,7 +236,7 @@
 .value {
   margin-top: var(--space-2);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .tags {
@@ -220,7 +263,7 @@
 .guideTitle {
   margin-bottom: var(--space-3);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -240,7 +283,7 @@
 
 .sectionTitle {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .interests {
@@ -256,15 +299,14 @@
   gap: var(--space-4);
   height: 100%;
   padding: var(--space-6);
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-card);
   color: var(--color-text-2);
-  transition: border-color 0.15s;
+  transition: background-color 0.15s;
 }
 
 .interest:hover {
-  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
 }
 
 .interest > span {
@@ -274,7 +316,7 @@
 
 .interest strong {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -292,6 +334,7 @@
   .head {
     flex-direction: column;
     align-items: flex-start;
+    padding: var(--space-6);
   }
 
   .title {

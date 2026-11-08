@@ -3,15 +3,14 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-1-5);
-  border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
-  background: var(--color-card);
+  background: var(--control-bg);
   color: var(--color-text-2);
   white-space: nowrap;
 }
 
 .chip:hover {
-  border-color: var(--color-text-4);
+  filter: brightness(0.97);
 }
 
 .sm {
@@ -24,7 +23,7 @@
   height: 36px;
   padding-inline: var(--space-4);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .lg {
@@ -35,10 +34,10 @@
 
 .selected,
 .selected:hover {
-  border-color: var(--color-primary);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
-  font-weight: 600;
+  background: var(--color-primary);
+  color: var(--color-card);
+  font-weight: 700;
+  filter: none;
 }
 
 .group {
@@ -65,13 +64,13 @@
 .outline {
   height: 32px;
   padding-inline: var(--space-3);
-  border: 1px solid var(--color-line);
   font-size: var(--fs-sm);
   color: var(--color-text-2);
+  background: var(--control-bg);
 }
 
 .soft {
   background: var(--color-primary-soft);
   color: var(--color-primary-strong);
-  font-weight: 500;
+  font-weight: 400;
 }

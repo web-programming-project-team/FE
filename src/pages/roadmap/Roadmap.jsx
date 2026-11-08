@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ArrowRight, Check, ChevronDown, ChevronRight, ChevronUp, ExternalLink } from 'lucide-react'
+import { Check, ChevronDown, ChevronRight, ChevronUp, ExternalLink, Route } from 'lucide-react'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
+import Collapse from '../../components/Collapse/Collapse.jsx'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Button from '../../components/Button/Button.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
@@ -24,9 +26,16 @@ export default function Roadmap() {
   const summaryQuery = useApi(() => roadmapApi.summary(), [])
   const roadmap = roadmapQuery.data
 
-  // 홈에서 단계를 눌러 들어오면 그 단계를 펼친다
+  // 펼친 단계: 처음엔 현재 단계(홈에서 단계를 눌러 들어오면 그 단계)만, 이후로는 누른 대로만 바뀐다.
+  // 항목을 완료해 현재 단계가 넘어가면 보던 단계는 그대로 두고 새 현재 단계를 함께 펼친다
   const { state } = useLocation()
-  const [openSteps, setOpenSteps] = useState(() => new Set(state?.step ? [state.step] : []))
+  const [openSteps, setOpenSteps] = useState(new Set())
+  const [seenCurrent, setSeenCurrent] = useState(undefined)   // 아직 못 본 상태는 undefined (모두 완료하면 currentStep이 null일 수 있음)
+  if (roadmap && roadmap.currentStep !== seenCurrent) {
+    const first = seenCurrent === undefined
+    setSeenCurrent(roadmap.currentStep)
+    setOpenSteps((prev) => new Set(prev).add(first ? (state?.step ?? roadmap.currentStep) : roadmap.currentStep))
+  }
   const toggleStep = (order) => setOpenSteps((prev) => toggled(prev, order))
 
   // 진행상태 변경: PATCH 응답의 진행률을 바로 반영하고, 단계 완료·다음 할 일은 다시 불러온다
@@ -53,96 +62,108 @@ export default function Roadmap() {
 
   const summary = roadmap.progress
   const itemCount = roadmap.steps.reduce((n, s) => n + s.items.length, 0)
-  const isOpen = (order) => openSteps.has(order) || (openSteps.size === 0 && order === roadmap.currentStep)
 
   return (
     <div className={styles.page}>
-      <Card className={styles.summary}>
-        <div className={styles.summaryMain}>
-          <div className={styles.greeting}>
-            <h1 className={styles.title}>{profile.nickname}님, 다음 걸음을 준비해요</h1>
-            <button type="button" className={styles.changeLink} onClick={() => setModalOpen(true)}>
-              상황 바꾸기 <ChevronRight size={14} aria-hidden="true" />
-            </button>
+      <PageHead
+        icon={Route}
+        quiet
+        title="내 로드맵"
+        description={`${profile.nickname}님, 다음 걸음을 준비해요.`}
+        actions={
+          <div className={styles.progressBox}>
+            <div className={styles.progressHead}>
+              <span>전체 진행률</span>
+              <strong className={styles.rate}>
+                {summary.rate}
+                <small>%</small>
+              </strong>
+            </div>
+            <div className={styles.bar} role="progressbar" aria-valuenow={summary.rate} aria-valuemin={0} aria-valuemax={100}>
+              <div className={styles.barFill} style={{ width: `${summary.rate}%` }} />
+            </div>
+            <div className={styles.progressFoot}>
+              <span>
+                완료 <b>{summary.completed}</b> · 진행 중 <b>{summary.inProgress}</b> · 남음 <b>{summary.remaining}</b>
+              </span>
+              <span className={styles.muted}>완료한 항목 기준</span>
+            </div>
           </div>
-          <div className={styles.profileRow}>
-            <span className={styles.stagePill}>
-              {profile.lifeStages.map((s) => LIFE_STAGE[s]).join(' · ')}
-            </span>
-            <span className={styles.muted}>관심분야</span>
-            {profile.interests.map((f) => (
-              <Tag key={f} tone="outline">{INTEREST_FIELD[f]}</Tag>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.progressBox}>
-          <div className={styles.progressHead}>
-            <span>전체 진행률</span>
-            <strong className={styles.rate}>
-              {summary.rate}
-              <small>%</small>
-            </strong>
-          </div>
-          <div className={styles.bar} role="progressbar" aria-valuenow={summary.rate} aria-valuemin={0} aria-valuemax={100}>
-            <div className={styles.barFill} style={{ width: `${summary.rate}%` }} />
-          </div>
-          <div className={styles.progressFoot}>
-            <span>
-              완료 <b>{summary.completed}</b> · 진행 중 <b>{summary.inProgress}</b> · 남음 <b>{summary.remaining}</b>
-            </span>
-            <span className={styles.muted}>완료한 항목 기준</span>
-          </div>
-        </div>
-      </Card>
+        }
+      />
 
       <div className={styles.columns}>
-        <section aria-labelledby="roadmap-title">
-          <div className={styles.sectionHead}>
-            <h2 id="roadmap-title" className={styles.sectionTitle}>{roadmap.templateName}</h2>
-            <span className={styles.muted}>
-              {roadmap.steps.length}단계 · {itemCount}개 항목
-            </span>
+        <div className={styles.main}>
+          {/* 내 상황: 로드맵을 만든 기준. 바꾸면 새 로드맵을 만든다 */}
+          <div className={styles.situation}>
+            <dl className={styles.situationList}>
+              <div>
+                <dt>현재 상황</dt>
+                <dd className={styles.stages}>
+                  {profile.lifeStages.map((s) => (
+                    <span key={s}>{LIFE_STAGE[s]}</span>
+                  ))}
+                </dd>
+              </div>
+              <div>
+                <dt>관심분야</dt>
+                <dd className={styles.interests}>
+                  {profile.interests.map((f) => (
+                    <span key={f}>{INTEREST_FIELD[f]}</span>
+                  ))}
+                </dd>
+              </div>
+            </dl>
+            <button type="button" className={styles.changeLink} onClick={() => setModalOpen(true)}>
+              상황 바꾸기 <ChevronRight size={16} aria-hidden="true" />
+            </button>
           </div>
 
-          <ol className={styles.timeline}>
-            {roadmap.steps.map((step, index) => {
-              const done = step.completed
-              const isCurrent = step.stepOrder === roadmap.currentStep
-              const open = isOpen(step.stepOrder)
-              const isLast = index === roadmap.steps.length - 1
-              return (
-                <li
-                  key={step.stepOrder}
-                  className={`${styles.step} ${isCurrent ? styles.current : ''} ${done ? styles.done : ''}`}
-                >
-                  {!isLast && <span className={styles.line} aria-hidden="true" />}
-                  <span className={styles.marker} aria-hidden="true">
-                    {done ? <Check size={14} strokeWidth={2.5} /> : step.stepOrder}
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.stepHead}
-                    aria-expanded={open}
-                    onClick={() => toggleStep(step.stepOrder)}
-                  >
-                    <span className={styles.stepTitle}>
-                      {step.title}
-                      {done && (
-                        <span className={styles.doneBadge}>
-                          <Check size={12} strokeWidth={2.5} aria-hidden="true" /> 완료
-                        </span>
-                      )}
-                      {isCurrent && <span className={styles.currentBadge}>현재 단계</span>}
-                    </span>
-                    <span className={styles.stepMeta}>
-                      {step.items.length}개 항목
-                      {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    </span>
-                  </button>
+          <section aria-labelledby="roadmap-title">
+            <div className={styles.sectionHead}>
+              <h2 id="roadmap-title" className={styles.sectionTitle}>{roadmap.templateName}</h2>
+              <span className={styles.muted}>
+                {roadmap.steps.length}단계 · {itemCount}개 항목
+              </span>
+            </div>
 
-                  {open && (
-                    <div className={styles.items}>
+            <ol className={styles.timeline}>
+              {roadmap.steps.map((step, index) => {
+                const done = step.completed
+                const isCurrent = step.stepOrder === roadmap.currentStep
+                const open = openSteps.has(step.stepOrder)
+                const isLast = index === roadmap.steps.length - 1
+                return (
+                  <li
+                    key={step.stepOrder}
+                    className={`${styles.step} ${isCurrent ? styles.current : ''} ${done ? styles.done : ''}`}
+                  >
+                    {!isLast && <span className={styles.line} aria-hidden="true" />}
+                    <span className={styles.marker} aria-hidden="true">
+                      {done ? <Check size={14} strokeWidth={2.5} /> : step.stepOrder}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.stepHead}
+                      aria-expanded={open}
+                      onClick={() => toggleStep(step.stepOrder)}
+                    >
+                      <span className={styles.stepTitle}>
+                        {step.title}
+                        {done && (
+                          <span className={styles.doneBadge}>
+                            <Check size={12} strokeWidth={2.5} aria-hidden="true" /> 완료
+                          </span>
+                        )}
+                        {isCurrent && <span className={styles.currentBadge}>현재 단계</span>}
+                      </span>
+                      <span className={styles.stepMeta}>
+                        {step.items.length}개 항목
+                        {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    </button>
+
+                    <Collapse open={open} className={styles.items}>
                       {step.items.length === 0 && <p className={styles.muted}>아직 담긴 지원이 없어요.</p>}
                       {step.items.map((item) => (
                         <RoadmapItem
@@ -151,26 +172,17 @@ export default function Roadmap() {
                           onStatusChange={(s) => changeStatus(item.itemId, s)}
                         />
                       ))}
-                    </div>
-                  )}
-                </li>
-              )
-            })}
-          </ol>
-        </section>
+                    </Collapse>
+                  </li>
+                )
+              })}
+            </ol>
+          </section>
+        </div>
 
         <aside className={styles.side}>
           <NextActions summary={summaryQuery.data} onStatusChange={changeStatus} />
           <UpcomingDeadlines summary={summaryQuery.data} />
-          <Link to="/jobs" className={styles.jobsBanner}>
-            <span>
-              <strong>
-                {summaryQuery.data?.newJobCount ? `새 맞춤 공고 ${summaryQuery.data.newJobCount}건` : '맞춤 채용공고'}
-              </strong>
-              <span>내 조건에 맞는 신입 공고를 확인해 보세요</span>
-            </span>
-            <ArrowRight size={18} aria-hidden="true" />
-          </Link>
         </aside>
       </div>
 
@@ -180,6 +192,7 @@ export default function Roadmap() {
           onClose={() => setModalOpen(false)}
           onRenewed={() => {
             setOpenSteps(new Set())
+            setSeenCurrent(undefined)
             roadmapQuery.reload()
             summaryQuery.reload()
           }}
@@ -207,7 +220,7 @@ function RoadmapItem({ item, onStatusChange }) {
         <StatusSelect value={item.status} onChange={onStatusChange} />
         <div className={styles.buttons}>
           <Button variant="outline" to={`/policies/${item.policyId}`}>자세히</Button>
-          <Button href={item.applyUrl}>
+          <Button variant="accent" href={item.applyUrl}>
             공식 사이트 <ExternalLink size={14} aria-hidden="true" />
           </Button>
         </div>

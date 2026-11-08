@@ -5,14 +5,13 @@
   justify-content: space-between;
   gap: var(--space-2);
   padding: var(--space-8) var(--space-10);
-  background: var(--color-card);
-  border-top: 1px solid var(--color-line);
+  background: transparent;
   font-size: var(--fs-xs);
   color: var(--color-text-3);
 }
 
 .footer strong {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 @media (max-width: 720px) {

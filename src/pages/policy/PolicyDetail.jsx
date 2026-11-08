@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, CalendarCheck, CalendarPlus, ChevronRight, ExternalLink } from 'lucide-react'
+import { Link, useParams } from 'react-router-dom'
+import { CalendarCheck, CalendarPlus, ChevronRight, ExternalLink } from 'lucide-react'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
@@ -18,7 +18,6 @@ import styles from './PolicyDetail.module.css'
 // 진행상태: 로드맵에 없으면 POST /roadmaps/me/items, 있으면 PATCH /roadmap-items/{itemId}/status
 export default function PolicyDetail() {
   const { policyId } = useParams()
-  const navigate = useNavigate()
   const { data: policy, loading, error, reload, setData } = useApi(() => policyApi.detail(policyId), [policyId])
   const [inCalendar, setInCalendar] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -96,9 +95,13 @@ export default function PolicyDetail() {
 
   return (
     <div className={styles.page}>
-      <button type="button" className={styles.back} onClick={() => navigate(-1)}>
-        <ArrowLeft size={16} aria-hidden="true" /> 뒤로가기
-      </button>
+      <nav aria-label="현재 위치" className={styles.breadcrumb}>
+        <ol>
+          <li><Link to="/">홈</Link></li>
+          <li><Link to="/policies">지원정보</Link></li>
+          <li aria-current="page">{policy.title}</li>
+        </ol>
+      </nav>
 
       <header className={styles.head}>
         <div className={styles.titleRow}>
@@ -204,7 +207,7 @@ export default function PolicyDetail() {
           </div>
 
           <div className={styles.sideActions}>
-            <Button href={policy.applyUrl} size="lg" block>
+            <Button variant="accent" href={policy.applyUrl} size="lg" block>
               공식 사이트에서 신청 <ExternalLink size={16} aria-hidden="true" />
             </Button>
             {end && (

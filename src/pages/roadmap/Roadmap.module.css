@@ -7,70 +7,99 @@
   color: var(--color-text-3);
 }
 
-/* 상단 요약 카드 */
-.summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6);
+.progressBox .muted {
+  color: inherit;   /* 파랑 상단 박스 안에서는 흰색 */
 }
 
-.summaryMain {
-  flex: 1 1 480px;
-  display: grid;
-  gap: var(--space-4);
-}
-
-.greeting {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6);
-}
-
-.title {
-  font-size: var(--fs-3xl);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
+/* 상단 박스 아래 "상황 바꾸기" */
 .changeLink {
   display: inline-flex;
+  flex: none;
   align-items: center;
-  gap: var(--space-0-5);
+  gap: var(--space-1);
+  height: 40px;
   font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--color-text-3);
+  font-weight: 700;
+  color: var(--color-primary);
 }
 
 .changeLink:hover {
-  color: var(--color-text);
+  color: var(--color-primary-strong);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
-.profileRow {
+/* 상단 박스 아래 내 상황 줄 */
+.situation {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  font-size: var(--fs-sm);
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  --control-bg: var(--color-bg-deep);
 }
 
-.stagePill {
-  height: 36px;
-  padding: 0 var(--space-4);
+.situationList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+}
+
+.situationList > div + div {
+  padding-left: var(--space-6);
+  border-left: 1px solid var(--color-line);
+}
+
+.situationList > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.situationList dt {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.situationList dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+/* 내 상황 값: 현재 상황은 남색 채움, 관심분야는 연한 남색 */
+.situationList dd span {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding-inline: var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--color-fill);
-  font-weight: 500;
-  line-height: 36px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.stages span {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+}
+
+.interests span {
+  background: var(--color-bg-deep);
   color: var(--color-text-2);
 }
 
 .progressBox {
-  flex: 0 1 368px;
+  width: 368px;
+  max-width: 100%;
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
   padding-left: var(--space-6);
-  border-left: 1px solid var(--color-line);
+  border-left: 1px solid var(--color-on-head-soft);
 }
 
 .progressHead {
@@ -78,15 +107,13 @@
   align-items: center;
   justify-content: space-between;
   font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--color-text-2);
+  font-weight: 400;
 }
 
 .rate {
-  font-size: var(--fs-4xl);
+  font-size: var(--fs-3xl);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--color-primary-strong);
 }
 
 .rate small {
@@ -96,7 +123,7 @@
 .bar {
   height: 8px;
   border-radius: var(--radius-pill);
-  background: var(--color-fill);
+  background: var(--color-card);
   overflow: hidden;
 }
 
@@ -110,8 +137,7 @@
   display: flex;
   justify-content: space-between;
   gap: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--color-text-2);
+  font-size: var(--fs-xs);
 }
 
 .progressFoot .muted {
@@ -136,7 +162,7 @@
 
 .sectionTitle {
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* 세로 타임라인 */
@@ -170,7 +196,7 @@
   border-radius: var(--radius-pill);
   background: var(--color-fill);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-3);
 }
 
@@ -201,7 +227,7 @@
   align-items: center;
   gap: var(--space-3);
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
@@ -222,7 +248,7 @@
   padding-inline: var(--space-2-5);
   border-radius: var(--radius-pill);
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .doneBadge {
@@ -265,7 +291,7 @@
 
 .itemTitle {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .itemSub {
@@ -302,6 +328,11 @@
 }
 
 /* 오른쪽 사이드 */
+.main {
+  display: grid;
+  gap: var(--space-6);
+}
+
 .side {
   display: grid;
   gap: var(--space-5);
@@ -312,7 +343,7 @@
   align-items: center;
   gap: var(--space-0-5);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
 }
 
@@ -336,7 +367,7 @@
 
 .todoTitle {
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .todoTitle:hover {
@@ -362,50 +393,21 @@
   color: var(--color-text-2);
 }
 
-.jobsBanner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-5) var(--space-6);
-  border-radius: var(--radius-card);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
-}
-
-.jobsBanner > span {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.jobsBanner strong {
-  font-size: var(--fs-lg);
-  font-weight: 600;
-}
-
-.jobsBanner span span {
-  font-size: var(--fs-sm);
-  color: var(--color-text-2);
-}
-
 @media (max-width: 1024px) {
   .columns {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .progressBox {
-    flex-basis: 100%;
+    width: 100%;
     padding-left: 0;
     padding-top: var(--space-5);
     border-left: 0;
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid var(--color-on-head-soft);
   }
 }
 
 @media (max-width: 560px) {
-  .title {
-    font-size: var(--fs-2xl);
-  }
 
   .step {
     padding-left: calc(var(--space-10) + var(--space-1));
