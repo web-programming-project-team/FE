@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { authApi, profileApi } from '../api/index.js'
+import { useLocation } from 'react-router-dom'
+import { authApi, notificationApi, profileApi } from '../api/index.js'
 import { tokens } from '../api/client.js'
-import { notifications as initialNotifications, roadmap } from '../mocks/data.js'
-import { toggled } from '../utils/set.js'
+import { roadmap } from '../mocks/data.js'
 
 // 화면 사이에서 공유하는 상태
 // - user: 로그인한 회원 정보 + 상태·관심분야·채용 조건 (GET /users/me, GET /users/me/profile)
-// - 맞춤 채용·커뮤니티·알림은 백엔드 구현 전이라 아래 예시 상태를 계속 쓴다
+// - 알림: GET /notifications · /notifications/unread-count. 화면을 옮길 때와 드롭다운을 열 때 새로 받는다
+// - 커뮤니티 후기 작성의 진행상태(policyStatus)는 백엔드 연동 전이라 예시 상태를 계속 쓴다
 const AppStateContext = createContext(null)
 
 const mockItems = roadmap.steps.flatMap((s) => s.items)
@@ -50,11 +51,35 @@ export function AppStateProvider({ children }) {
       .catch(() => setUser(null))
   }, [])
 
-  // ── 예시 데이터 상태 (맞춤 채용·커뮤니티·알림 화면용) ──
+  // ── 예시 데이터 상태 (커뮤니티 후기 작성용) ──
   const [statuses, setStatuses] = useState(() => Object.fromEntries(mockItems.map((i) => [i.itemId, i.status])))
-  const [savedJobIds, setSavedJobIds] = useState(() => new Set())
-  const [notifications, setNotifications] = useState(initialNotifications)
+
+  // ── 알림 센터 ──
+  const [notifications, setNotifications] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
   const [notificationOpen, setNotificationOpen] = useState(false)
+  const { pathname } = useLocation()
+  const userId = user?.userId
+
+  // 최근 알림 20개와 안 읽은 수. 실패하면 null(화면은 그대로 두고 다음 화면 이동 때 다시 시도)
+  const fetchNotifications = () =>
+    Promise.all([notificationApi.list({ size: 20 }), notificationApi.unreadCount()]).catch(() => null)
+  const applyNotifications = (result) => {
+    if (!result) return
+    setNotifications(result[0].content)
+    setUnreadCount(result[1].unreadCount)
+  }
+  const refreshNotifications = useCallback(() => fetchNotifications().then(applyNotifications), [])
+
+  // 로그인한 상태에서 화면을 옮길 때마다 (명세: 화면 이동 시 안 읽은 수를 가볍게 호출)
+  useEffect(() => {
+    if (!userId) return
+    let alive = true
+    fetchNotifications().then((result) => alive && applyNotifications(result))
+    return () => {
+      alive = false
+    }
+  }, [userId, pathname])
 
   const value = useMemo(() => {
     const itemOfPolicy = (policyId) => mockItems.find((i) => i.policyId === Number(policyId))
@@ -89,18 +114,31 @@ export function AppStateProvider({ children }) {
         if (item) setStatuses((s) => ({ ...s, [item.itemId]: status }))
       },
 
-      savedJobIds,
-      toggleSavedJob: (jobId) => setSavedJobIds((prev) => toggled(prev, jobId)),
-
-      notifications,
-      unreadCount: notifications.filter((n) => !n.read).length,
-      markRead: (id) =>
-        setNotifications((list) => list.map((n) => (n.notificationId === id ? { ...n, read: true } : n))),
-      markAllRead: () => setNotifications((list) => list.map((n) => ({ ...n, read: true }))),
+      // 로그아웃하면 지난 회원의 알림을 보여주지 않는다
+      notifications: userId ? notifications : [],
+      unreadCount: userId ? unreadCount : 0,
+      refreshNotifications,
+      // 화면에 먼저 반영하고 서버에 알린다. 실패하면 다시 받아 맞춘다
+      markRead: (id) => {
+        const target = notifications.find((n) => n.notificationId === id)
+        if (!target || target.read) return
+        setNotifications((list) => list.map((n) => (n.notificationId === id ? { ...n, read: true } : n)))
+        setUnreadCount((c) => Math.max(0, c - 1))
+        notificationApi.read(id).catch(refreshNotifications)
+      },
+      markAllRead: () => {
+        setNotifications((list) => list.map((n) => ({ ...n, read: true })))
+        setUnreadCount(0)
+        notificationApi.readAll().catch(refreshNotifications)
+      },
       notificationOpen,
-      setNotificationOpen,
+      // 드롭다운을 열 때 최신 알림을 다시 받는다
+      setNotificationOpen: (open) => {
+        setNotificationOpen(open)
+        if (open) refreshNotifications()
+      },
     }
-  }, [user, reloadUser, statuses, savedJobIds, notifications, notificationOpen])
+  }, [user, userId, reloadUser, statuses, notifications, unreadCount, refreshNotifications, notificationOpen])
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }

@@ -1,7 +1,7 @@
 import client, { tokens } from './client.js'
 
 // 화면에서 쓰는 API 모음 (API 명세 v1.5). 응답은 data만 온다
-// 맞춤 채용·커뮤니티·알림은 백엔드 구현 전이라 아직 예시 데이터(mocks)를 쓴다
+// 커뮤니티는 백엔드 연동 전이라 아직 예시 데이터(mocks)를 쓴다
 
 export const authApi = {
   signup: (body) => client.post('/auth/signup', body),
@@ -49,6 +49,22 @@ export const calendarApi = {
   remove: (eventId) => client.delete(`/calendar/events/${eventId}`),
 }
 
+export const jobApi = {
+  // sort: deadline(기본) · latest
+  recommended: (params) => client.get('/jobs/recommended', { params }),
+  detail: (jobId) => client.get(`/jobs/${jobId}`),
+  bookmark: (jobId) => client.post(`/jobs/${jobId}/bookmark`),
+  unbookmark: (jobId) => client.delete(`/jobs/${jobId}/bookmark`),
+  bookmarks: (params) => client.get('/jobs/bookmarks', { params }),
+}
+
+export const notificationApi = {
+  list: (params) => client.get('/notifications', { params }),
+  unreadCount: () => client.get('/notifications/unread-count'),
+  read: (notificationId) => client.patch(`/notifications/${notificationId}/read`),
+  readAll: () => client.patch('/notifications/read-all'),
+}
+
 export const adminApi = {
   policies: (params) => client.get('/admin/policies', { params }),
   createPolicy: (body) => client.post('/admin/policies', body),
@@ -57,4 +73,8 @@ export const adminApi = {
   verifyPolicy: (policyId) => client.patch(`/admin/policies/${policyId}/verify`),
   stats: (params) => client.get('/admin/stats', { params }),
   syncLogs: (params) => client.get('/admin/sync/logs', { params }),
+  jobs: (params) => client.get('/admin/jobs', { params }),
+  createJob: (body) => client.post('/admin/jobs', body),
+  updateJob: (jobId, body) => client.put(`/admin/jobs/${jobId}`, body),
+  closeJob: (jobId) => client.patch(`/admin/jobs/${jobId}/close`),
 }

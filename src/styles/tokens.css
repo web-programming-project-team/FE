@@ -1,17 +1,10 @@
 /* 디자인 토큰 — Figma "Next 시흥" 기준 값, 색은 시흥시 홈페이지 기준 */
 :root {
   /* 색 */
-<<<<<<< HEAD
-  --color-primary: #00857A;          /* 흰 글자 대비 4.5:1 (Figma #009689에서 조정) */
-  --color-primary-strong: #00786F;   /* 강조 글자, 선택된 칩 글자 */
-  --color-primary-soft: #F0FDFA;     /* 선택 배경, 안내 박스 */
-  --color-bg: #F9FAFB;
-=======
   --color-primary: #123A77;
   --color-primary-strong: #0B2A5B;   /* 강조 글자, 선택된 칩 글자 */
   --color-primary-soft: #F0F3FA;     /* 선택 배경, 안내 박스 */
   --color-bg: #F7F9FC;
->>>>>>> 2dd7633 (feat: 색상 변경)
   --color-card: #FFFFFF;
   --color-line: #DDE2ED;
   --color-fill: #F3F4F6;             /* 중립 배지·칩 배경 */
