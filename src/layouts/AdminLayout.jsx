@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Database, FileText, Flag, Route } from 'lucide-react'
+import { Briefcase, Database, FileText, Flag, Route } from 'lucide-react'
 import Logo from '../components/Logo/Logo.jsx'
 import { useAppState } from '../context/AppState.jsx'
 import styles from './AdminLayout.module.css'
 
 const MENUS = [
   { to: '/admin/policies', label: '정책 관리', icon: FileText },
+  { to: '/admin/jobs', label: '채용공고 관리', icon: Briefcase },
   { to: '/admin/templates', label: '로드맵 템플릿', icon: Route },
   { to: '/admin/reports', label: '신고 관리', icon: Flag },
   { to: '/admin/collect', label: '수집·운영 지표', icon: Database },

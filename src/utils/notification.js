@@ -1,7 +1,9 @@
 // 알림 link(targetType, targetId) → 화면 경로. POST_LIST·CALENDAR는 명세에 없어 임시로 정한 값이다.
 const PATHS = {
   POLICY: (id) => `/policies/${id}`,
+  JOB: (id) => `/jobs/${id}`,
   JOB_LIST: () => '/jobs',
+  POST: (id) => `/community/${id}`,
   POST_LIST: () => '/community',
   CALENDAR: () => '/calendar',
 }

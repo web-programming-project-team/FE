@@ -334,3 +334,38 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* 맞춤 공고 · 관심 공고 탭 */
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.tab {
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--color-text-3);
+}
+
+.tab span {
+  margin-left: var(--space-1);
+  color: var(--color-primary-strong);
+}
+
+.tabActive {
+  border-bottom-color: var(--color-primary-strong);
+  color: var(--color-text);
+}
+
+.jobLink:hover {
+  text-decoration: underline;
+}
+
+.closedJob {
+  opacity: 0.6;
+}

@@ -167,7 +167,9 @@ export default function PolicyDetail() {
                 {policy.relatedJobs.map((j) => (
                   <Card as="article" key={j.jobId} className={styles.job}>
                     <h3 className={styles.jobTitle}>
-                      {j.company} · {j.title}
+                      <Link to={`/jobs/${j.jobId}`}>
+                        {j.company} · {j.title}
+                      </Link>
                     </h3>
                     <div className={styles.jobMeta}>
                       <span>신입</span>

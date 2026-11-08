@@ -4,7 +4,6 @@
 export const BASE_DATE = '2026-10-25'
 
 const ONTONG_URL = 'https://www.youthcenter.go.kr'
-const WORK24_URL = 'https://www.work24.go.kr'
 
 export const me = {
   nickname: 'A',
@@ -109,8 +108,6 @@ export const policies = [
 
 export const policyById = (id) => policies.find((p) => p.policyId === Number(id))
 
-const helpful = (...ids) => ids.map((id) => ({ policyId: id, title: policyById(id).title }))
-
 // 내 로드맵 (GET /roadmaps/me). 항목 진행상태는 AppState에서 관리한다.
 export const roadmap = {
   roadmapId: 31,
@@ -164,69 +161,6 @@ export const nextActions = [
   { itemId: 201, policyId: 1, title: '청년 직무역량 아카데미', actionLabel: '공식 사이트에서 신청하기' },
   { itemId: 301, policyId: 5, title: '청년 상담', actionLabel: '상담 일정 확인하기' },
   { itemId: 202, policyId: 2, title: '청년 자격증 응시료 지원', actionLabel: '준비 서류 확인하기' },
-]
-
-export const jobs = [
-  {
-    jobId: 11,
-    company: '(주)시흥테크',
-    title: '사무직 신입',
-    region: 'SIHEUNG',
-    jobCategory: 'OFFICE',
-    education: 'UNIVERSITY',
-    employmentType: 'FULL_TIME',
-    deadline: '2026-11-03',
-    isNew: false,
-    careerLevel: 'NEW',
-    dataSource: 'ADMIN',
-    originalUrl: WORK24_URL,
-    helpfulPolicies: helpful(1, 2),
-  },
-  {
-    jobId: 12,
-    company: '시흥디지털솔루션',
-    title: '웹개발 신입',
-    region: 'ANSAN',
-    jobCategory: 'IT',
-    education: 'UNIVERSITY',
-    employmentType: 'FULL_TIME',
-    deadline: '2026-11-06',
-    isNew: true,
-    careerLevel: 'NEW',
-    dataSource: 'ADMIN',
-    originalUrl: WORK24_URL,
-    helpfulPolicies: helpful(1),
-  },
-  {
-    jobId: 13,
-    company: '인천넥스트시스템',
-    title: 'IT 운영 신입',
-    region: 'INCHEON',
-    jobCategory: 'IT',
-    education: 'UNIVERSITY',
-    employmentType: 'FULL_TIME',
-    deadline: '2026-11-09',
-    isNew: true,
-    careerLevel: 'NEW',
-    dataSource: 'ADMIN',
-    originalUrl: WORK24_URL,
-    helpfulPolicies: helpful(1),
-  },
-  {
-    jobId: 14,
-    company: '부천그린파트너스',
-    title: '경영지원 신입',
-    region: 'BUCHEON',
-    jobCategory: 'OFFICE',
-    education: 'UNIVERSITY',
-    employmentType: 'FULL_TIME',
-    deadline: '2026-11-12',
-    isNew: true,
-    careerLevel: 'NEW',
-    dataSource: 'ADMIN',
-    originalUrl: WORK24_URL,
-    helpfulPolicies: helpful(1, 2),
-  },
 ]
 
 // 후기 — 작성자는 실명 없이 상황만 보여 준다
@@ -289,28 +223,4 @@ export const events = [
   { eventId: 10, date: '2026-11-12', type: 'PARTICIPATION', title: '아카데미 참여', sourceType: 'POLICY', sourceId: 1, eventTime: null },
   { eventId: 11, date: '2026-11-12', type: 'JOB_DEADLINE', title: '경영지원 채용 마감', sourceType: 'JOB', sourceId: 14, eventTime: null },
   { eventId: 12, date: '2026-11-30', type: 'APPLY_END', title: '월세 지원 마감', sourceType: 'POLICY', sourceId: 3, eventTime: null },
-]
-
-// 알림 센터 (GET /notifications)
-export const notifications = [
-  {
-    notificationId: 1, type: 'DEADLINE', title: '자격증 응시료 지원 신청 마감 D-3',
-    body: '10월 28일까지 · 준비 서류를 확인해 보세요', link: { targetType: 'POLICY', targetId: 2 }, read: false,
-    createdAt: '2026-10-25T09:00:00',
-  },
-  {
-    notificationId: 2, type: 'NEW_JOB', title: '조건에 맞는 새 공고 3건',
-    body: '사무·IT 신입 공고를 확인해 보세요', link: { targetType: 'JOB_LIST', targetId: null }, read: false,
-    createdAt: '2026-10-25T04:05:00',
-  },
-  {
-    notificationId: 3, type: 'NEW_REVIEW', title: '관심 프로그램에 새 후기 2건',
-    body: '청년 직무역량 아카데미 참여 경험이에요', link: { targetType: 'POST_LIST', targetId: null }, read: false,
-    createdAt: '2026-10-24T18:00:00',
-  },
-  {
-    notificationId: 4, type: 'SYSTEM', title: '청년 상담 일정 11월 5일 오후 2시',
-    body: 'NEXT 캘린더에서 일정을 확인해 보세요', link: { targetType: 'CALENDAR', targetId: null }, read: false,
-    createdAt: '2026-10-24T09:00:00',
-  },
 ]
