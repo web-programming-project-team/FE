@@ -77,6 +77,9 @@ export const POST_TYPE = {
   PORTFOLIO: '포트폴리오',
 }
 
+// 후기 쓰기의 '도움이 된 점' 선택지 (서버는 자유 문자열로 받는다)
+export const HELPFUL_POINTS = ['실무 과제', '멘토 피드백', '직무 탐색', '서류 준비', '면접 준비', '자격증']
+
 export const PREP_PERIOD = {
   WEEK_1: '1주 이내',
   MONTH_1: '1개월',

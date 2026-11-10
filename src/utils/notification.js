@@ -12,6 +12,6 @@ export const notificationPath = ({ targetType, targetId }) => PATHS[targetType]?
 
 // 제목 끝의 D-3을 따로 강조하기 위해 나눈다
 export function splitDday(title) {
-  const match = title.match(/^(.*)\s(D-\d+|D-DAY)$/)
+  const match = title.match(/^(.*)\s(D-\d+|D-day)$/i)
   return match ? [match[1], match[2]] : [title, null]
 }

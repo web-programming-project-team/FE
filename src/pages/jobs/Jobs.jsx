@@ -20,8 +20,8 @@ import {
   PREP_PERIOD,
   REGION,
 } from '../../constants/enumLabels.js'
-import { jobApi } from '../../api/index.js'
-import { reviews } from '../../mocks/data.js'
+import { jobApi, postApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { formatDot } from '../../utils/date.js'
 import { notificationPath, splitDday } from '../../utils/notification.js'
@@ -338,17 +338,32 @@ function BookmarkList({ onCount }) {
   )
 }
 
-// 커뮤니티 담당 화면이 API로 바뀌기 전까지 예시 후기를 보여준다
+// 합격 후기 최신 3개 (GET /posts?type=PASS_REVIEW). 같은 상황 후기가 없으면 전체에서 보여준다
+const PASS_REVIEW_COUNT = 3
+
 function PassReviews() {
-  const list = reviews.filter((r) => r.type === 'PASS_REVIEW')
+  const { profile } = useAppState()
+  const hasStage = profile.lifeStages.length > 0
+  const query = useApi(async () => {
+    const params = { type: 'PASS_REVIEW', size: PASS_REVIEW_COUNT }
+    if (hasStage) {
+      const same = await postApi.list({ ...params, sameStage: true })
+      if (same.content.length > 0) return { sameStage: true, list: same.content }
+    }
+    return { sameStage: false, list: (await postApi.list(params)).content }
+  }, [hasStage])
+  const { sameStage, list = [] } = query.data ?? {}
+
   return (
     <Card>
-      <CardHeader title="같은 상황 청년의 합격 후기" />
+      <CardHeader title={sameStage ? '같은 상황 청년의 합격 후기' : '먼저 취업한 청년의 합격 후기'} />
       <p className={styles.sideDescription}>먼저 취업을 준비한 청년의 경험이에요.</p>
+      <AsyncState loading={query.loading} error={query.error} onRetry={query.reload} />
+      {query.data && list.length === 0 && <p className={styles.sideDescription}>아직 등록된 합격 후기가 없어요.</p>}
       <ul className={styles.passList}>
         {list.map((r) => (
           <li key={r.postId}>
-            <Link to="/community" className={styles.pass}>
+            <Link to={`/community/${r.postId}`} className={styles.pass}>
               <span className={styles.passStage}>{authorStageLabel(r)}</span>
               <strong>{r.oneLiner}</strong>
               <span className={styles.passTags}>
@@ -357,7 +372,7 @@ function PassReviews() {
                 ))}
               </span>
               <span className={styles.passMeta}>
-                {r.policy.title} · 준비 {PREP_PERIOD[r.prepPeriod]}
+                {r.policy?.title ?? JOB_CATEGORY[r.jobCategory] ?? '합격 후기'} · 준비 {PREP_PERIOD[r.prepPeriod]}
               </span>
             </Link>
           </li>
