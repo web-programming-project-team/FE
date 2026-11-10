@@ -88,13 +88,14 @@ export default function Community() {
     }
   }
 
-  const afterWrite = () => {
+  // 쓴 글의 종류 탭으로 옮겨 바로 보이게 한다
+  const afterWrite = (type) => {
     setWriteOpen(false)
-    if (tab === 'PROGRAM_REVIEW') {
+    if (tab === type) {
       listQuery.reload()
       reviewedQuery.reload()
     } else {
-      setTab('PROGRAM_REVIEW')
+      setTab(type)
     }
   }
 
@@ -215,6 +216,7 @@ export default function Community() {
         <ReviewWriteModal
           policies={writablePolicies}
           initialPolicyId={policyFilter === 'ALL' ? undefined : policyFilter}
+          initialType={tab}
           onClose={() => setWriteOpen(false)}
           onSubmit={afterWrite}
         />

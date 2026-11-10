@@ -21,7 +21,6 @@ import MyRecords from './pages/me/MyRecords.jsx'
 import AdminPolicies from './pages/admin/AdminPolicies.jsx'
 import AdminJobs from './pages/admin/AdminJobs.jsx'
 import AdminReports from './pages/admin/AdminReports.jsx'
-import Admin from './pages/admin/Admin.jsx'
 import AdminCollect from './pages/admin/AdminCollect.jsx'
 import HealthCheck from './pages/HealthCheck.jsx'
 import NotFound from './pages/NotFound.jsx'
@@ -66,7 +65,6 @@ export default function App() {
           <Route index element={<Navigate to="policies" replace />} />
           <Route path="policies" element={<AdminPolicies />} />
           <Route path="jobs" element={<AdminJobs />} />
-          <Route path="templates" element={<Admin title="로드맵 템플릿" />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path="collect" element={<AdminCollect />} />
         </Route>

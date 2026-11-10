@@ -2,15 +2,12 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useLocation } from 'react-router-dom'
 import { authApi, notificationApi, profileApi } from '../api/index.js'
 import { tokens } from '../api/client.js'
-import { roadmap } from '../mocks/data.js'
 
 // 화면 사이에서 공유하는 상태
 // - user: 로그인한 회원 정보 + 상태·관심분야·채용 조건 (GET /users/me, GET /users/me/profile)
 // - 알림: GET /notifications · /notifications/unread-count. 화면을 옮길 때와 드롭다운을 열 때 새로 받는다
-// - 커뮤니티 후기 작성의 진행상태(policyStatus)는 백엔드 연동 전이라 예시 상태를 계속 쓴다
 const AppStateContext = createContext(null)
 
-const mockItems = roadmap.steps.flatMap((s) => s.items)
 const EMPTY_PREFERENCE = { regions: [], education: null, careerLevel: null, jobCategories: [], employmentTypes: [] }
 
 async function fetchUser() {
@@ -51,9 +48,6 @@ export function AppStateProvider({ children }) {
       .catch(() => setUser(null))
   }, [])
 
-  // ── 예시 데이터 상태 (커뮤니티 후기 작성용) ──
-  const [statuses, setStatuses] = useState(() => Object.fromEntries(mockItems.map((i) => [i.itemId, i.status])))
-
   // ── 알림 센터 ──
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
@@ -82,8 +76,6 @@ export function AppStateProvider({ children }) {
   }, [userId, pathname])
 
   const value = useMemo(() => {
-    const itemOfPolicy = (policyId) => mockItems.find((i) => i.policyId === Number(policyId))
-
     return {
       user,
       reloadUser,
@@ -102,16 +94,6 @@ export function AppStateProvider({ children }) {
       updateJobPreference: async (patch) => {
         const jobPreference = await profileApi.updateJobPreference(patch)
         setUser((u) => (u ? { ...u, jobPreference } : u))
-      },
-
-      // 맞춤 채용·후기 화면의 예시 진행상태 (해당 화면이 API로 바뀌면 지운다)
-      policyStatus: (policyId) => {
-        const item = itemOfPolicy(policyId)
-        return item ? statuses[item.itemId] : 'TO_CHECK'
-      },
-      setPolicyStatus: (policyId, status) => {
-        const item = itemOfPolicy(policyId)
-        if (item) setStatuses((s) => ({ ...s, [item.itemId]: status }))
       },
 
       // 로그아웃하면 지난 회원의 알림을 보여주지 않는다
@@ -138,7 +120,7 @@ export function AppStateProvider({ children }) {
         if (open) refreshNotifications()
       },
     }
-  }, [user, userId, reloadUser, statuses, notifications, unreadCount, refreshNotifications, notificationOpen])
+  }, [user, userId, reloadUser, notifications, unreadCount, refreshNotifications, notificationOpen])
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }
