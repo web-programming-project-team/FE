@@ -139,15 +139,17 @@ export default function PolicyDetail() {
             <section>
               <div className={styles.sectionHead}>
                 <h2 className={styles.sectionTitle}>먼저 참여한 청년의 후기</h2>
-                <Link to="/community" className={styles.more}>
-                  후기 더 보기 <ChevronRight size={14} aria-hidden="true" />
+                <Link to={`/community?policyId=${policy.policyId}`} className={styles.more}>
+                  후기 {policy.reviewCount}개 모두 보기 <ChevronRight size={14} aria-hidden="true" />
                 </Link>
               </div>
               <div className={styles.reviews}>
                 {policy.reviews.map((r) => (
                   <Card as="article" key={r.postId} className={styles.review}>
                     <Stars value={r.rating} />
-                    <h3 className={styles.reviewTitle}>{r.oneLiner}</h3>
+                    <h3 className={styles.reviewTitle}>
+                      <Link to={`/community/${r.postId}`}>{r.oneLiner}</Link>
+                    </h3>
                     <p className={styles.reviewMeta}>
                       준비 기간 <b>{PREP_PERIOD[r.prepPeriod]}</b>
                     </p>

@@ -1,7 +1,6 @@
 import client, { tokens } from './client.js'
 
 // 화면에서 쓰는 API 모음 (API 명세 v1.5). 응답은 data만 온다
-// 커뮤니티는 백엔드 연동 전이라 아직 예시 데이터(mocks)를 쓴다
 
 export const authApi = {
   signup: (body) => client.post('/auth/signup', body),
@@ -58,6 +57,19 @@ export const jobApi = {
   bookmarks: (params) => client.get('/jobs/bookmarks', { params }),
 }
 
+// 커뮤니티: 후기·포트폴리오, 좋아요, 신고
+export const postApi = {
+  list: (params) => client.get('/posts', { params }),
+  detail: (postId) => client.get(`/posts/${postId}`),
+  create: (body) => client.post('/posts', body),
+  update: (postId, patch) => client.patch(`/posts/${postId}`, patch),
+  remove: (postId) => client.delete(`/posts/${postId}`),
+  mine: (params) => client.get('/users/me/posts', { params }),
+  like: (postId) => client.post(`/posts/${postId}/likes`),
+  unlike: (postId) => client.delete(`/posts/${postId}/likes`),
+  report: (postId, body) => client.post(`/posts/${postId}/reports`, body),
+}
+
 export const notificationApi = {
   list: (params) => client.get('/notifications', { params }),
   unreadCount: () => client.get('/notifications/unread-count'),
@@ -77,4 +89,6 @@ export const adminApi = {
   createJob: (body) => client.post('/admin/jobs', body),
   updateJob: (jobId, body) => client.put(`/admin/jobs/${jobId}`, body),
   closeJob: (jobId) => client.patch(`/admin/jobs/${jobId}/close`),
+  reports: (params) => client.get('/admin/reports', { params }),
+  changePostVisibility: (postId, body) => client.patch(`/admin/posts/${postId}/visibility`, body),
 }
