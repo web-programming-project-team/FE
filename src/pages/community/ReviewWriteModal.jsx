@@ -6,22 +6,20 @@ import Select from '../../components/Select/Select.jsx'
 import { Chip, ChipGroup } from '../../components/Chip/Chip.jsx'
 import { StarInput } from '../../components/Stars/Stars.jsx'
 import { PREP_PERIOD } from '../../constants/enumLabels.js'
-import { HELPFUL_POINTS, policies, policyById } from '../../mocks/data.js'
+import { HELPFUL_POINTS } from '../../mocks/data.js'
+import { postApi } from '../../api/index.js'
 import { useAppState } from '../../context/AppState.jsx'
-import { toIso, today } from '../../utils/date.js'
 import styles from './ReviewWriteModal.module.css'
 
 // 서버도 같은 검사를 한다(CONTACT_INFO_DETECTED). 화면에서는 먼저 알려 주기만 한다.
 const CONTACT_PATTERN = /(01[016789][-.\s]?\d{3,4}[-.\s]?\d{4})|([\w.+-]+@[\w-]+\.[\w.]+)|(카톡|카카오톡|오픈채팅)\s*(아이디|id)?/i
 
-export default function ReviewWriteModal({ onClose, onSubmit }) {
-  const { profile, policyStatus } = useAppState()
-  // 진행 중이거나 완료한 정책을 먼저 보여 준다
-  const sorted = [...policies].sort(
-    (a, b) => Number(policyStatus(a.policyId) === 'TO_CHECK') - Number(policyStatus(b.policyId) === 'TO_CHECK'),
-  )
+// 참여 후기 작성 (POST /posts). 작성자 상황(authorStage)은 서버가 로그인 회원의 상황으로 채운다
+// policies: 커뮤니티 화면이 불러온 정책 목록, initialPolicyId: 정책 필터로 보고 있던 정책
+export default function ReviewWriteModal({ policies, initialPolicyId, onClose, onSubmit }) {
+  const { profile } = useAppState()
   const [form, setForm] = useState({
-    policyId: sorted[0].policyId,
+    policyId: initialPolicyId ?? policies[0]?.policyId ?? null,
     rating: 5,
     oneLiner: '',
     prepPeriod: 'MONTH_1',
@@ -29,28 +27,32 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
     content: '',
   })
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }))
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
+    if (!form.policyId) return setError('연결할 정책을 골라 주세요.')
     if (!form.oneLiner.trim()) return setError('한 줄 평을 입력해 주세요.')
     if (CONTACT_PATTERN.test(form.oneLiner) || CONTACT_PATTERN.test(form.content)) {
       return setError('연락처는 게시글에 쓸 수 없어요.')
     }
-    // TODO(11주차): POST /posts
-    const { policyId, ...fields } = form
-    onSubmit({
-      ...fields,
-      type: 'PROGRAM_REVIEW',
-      oneLiner: form.oneLiner.trim(),
-      policy: { policyId, title: policyById(policyId).title },
-      job: null,
-      jobCategory: profile.jobPreference.jobCategories[0] ?? 'ETC',
-      authorStage: profile.lifeStages[0],
-      authorStageAfter: null,
-      liked: false,
-      createdAt: toIso(today()),
-    })
+    setError('')
+    setSubmitting(true)
+    try {
+      await postApi.create({
+        ...form,
+        type: 'PROGRAM_REVIEW',
+        oneLiner: form.oneLiner.trim(),
+        // 직무 태그는 맞춤 채용 조건의 첫 직무 (없으면 비움)
+        jobCategory: profile.jobPreference.jobCategories[0] ?? null,
+      })
+      onSubmit()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -63,7 +65,7 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
             className={styles.input}
             value={form.policyId}
             onChange={(v) => set('policyId', v)}
-            options={sorted.map((p) => [p.policyId, p.title])}
+            options={policies.map((p) => [p.policyId, p.title])}
           />
         </div>
 
@@ -124,7 +126,7 @@ export default function ReviewWriteModal({ onClose, onSubmit }) {
             <ShieldCheck size={14} aria-hidden="true" />
             {error || '실명·연락처는 쓰지 말아 주세요'}
           </p>
-          <Button type="submit" size="lg" block>
+          <Button type="submit" size="lg" block disabled={submitting}>
             등록
           </Button>
         </div>

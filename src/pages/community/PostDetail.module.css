@@ -1,0 +1,95 @@
+.card {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.info {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-3) var(--space-6);
+  margin: 0;
+}
+
+.info div {
+  display: contents;
+}
+
+.info dt {
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.info dd {
+  margin: 0;
+  font-size: var(--fs-base);
+  color: var(--color-text);
+}
+
+.info dd a {
+  color: var(--color-primary);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.content {
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  color: var(--color-text-2);
+  white-space: pre-wrap;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  width: fit-content;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+}
+
+.like {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.liked {
+  color: var(--color-danger);
+}
+
+.liked svg {
+  fill: currentColor;
+}
+
+.back {
+  margin-top: var(--space-4);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .info {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) 0;
+  }
+
+  .info dd {
+    margin-bottom: var(--space-3);
+  }
+}

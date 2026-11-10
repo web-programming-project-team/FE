@@ -154,6 +154,14 @@
   line-height: 1.6;
 }
 
+.reviewTitle a {
+  color: inherit;
+}
+
+.reviewTitle a:hover {
+  text-decoration: underline;
+}
+
 .reviewMeta {
   font-size: var(--fs-sm);
   color: var(--color-text-3);

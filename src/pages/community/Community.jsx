@@ -1,49 +1,73 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Ellipsis, Heart, MessagesSquare, Pencil } from 'lucide-react'
 import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card from '../../components/Card/Card.jsx'
 import Button from '../../components/Button/Button.jsx'
 import Select from '../../components/Select/Select.jsx'
 import Toggle from '../../components/Toggle/Toggle.jsx'
+import AsyncState from '../../components/AsyncState/AsyncState.jsx'
 import { Chip, Tag } from '../../components/Chip/Chip.jsx'
 import { Stars } from '../../components/Stars/Stars.jsx'
 import ReviewWriteModal from './ReviewWriteModal.jsx'
 import ReportModal from './ReportModal.jsx'
 import { JOB_CATEGORY, LIFE_STAGE, POST_TYPE, PREP_PERIOD, authorStageLabel } from '../../constants/enumLabels.js'
-import { policies, reviews as initialReviews } from '../../mocks/data.js'
+import { policyApi, postApi, roadmapApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
 import { useAppState } from '../../context/AppState.jsx'
 import { formatDot } from '../../utils/date.js'
-import { toggled } from '../../utils/set.js'
 import styles from './Community.module.css'
 
-const SORTS = {
-  latest: { label: '작성일 최신순', compare: (a, b) => b.createdAt.localeCompare(a.createdAt) },
-  likes: { label: '도움돼요 많은순', compare: (a, b) => b.likeCount - a.likeCount },
-}
+// GET /posts?sort=
+const SORTS = { latest: '작성일 최신순', likes: '도움돼요 많은순' }
+const PAGE_SIZE = 50
 
+// 커뮤니티 목록 (GET /posts). 필터·정렬은 서버가 한다
+// 정책 상세의 '후기 더 보기'는 /community?policyId=로 들어와 그 정책으로 걸러 보여준다
 export default function Community() {
   const { profile } = useAppState()
-  const [posts, setPosts] = useState(initialReviews)
+  const [searchParams] = useSearchParams()
   const [tab, setTab] = useState('PROGRAM_REVIEW')
-  const [policyFilter, setPolicyFilter] = useState('ALL')
+  const [policyFilter, setPolicyFilter] = useState(() => Number(searchParams.get('policyId')) || 'ALL')
   const [jobFilter, setJobFilter] = useState('ALL')
   const [sameStageOnly, setSameStageOnly] = useState(false)
   const [sort, setSort] = useState('latest')
-  const [liked, setLiked] = useState(() => new Set())
   const [writeOpen, setWriteOpen] = useState(false)
   const [reportTarget, setReportTarget] = useState(null)
 
-  const list = useMemo(
+  // 정책 필터: 이 탭에서 후기가 달린 정책만 고를 수 있게 한다 (정책이 수백 건이라 전부 보여주지 않음)
+  const reviewedQuery = useApi(() => postApi.list({ type: tab, size: PAGE_SIZE }), [tab])
+  const reviewedPolicies = useMemo(() => {
+    const map = new Map()
+    for (const p of reviewedQuery.data?.content ?? []) if (p.policy) map.set(p.policy.policyId, p.policy.title)
+    return [...map].sort((a, b) => a[1].localeCompare(b[1]))
+  }, [reviewedQuery.data])
+
+  // 후기 쓰기의 정책 선택: 내 로드맵에 담긴 정책을 먼저, 그다음 지원정보 목록 (GET /roadmaps/me, GET /policies)
+  const roadmapQuery = useApi(() => roadmapApi.mine(), [])
+  const policyQuery = useApi(() => policyApi.list({ size: 50 }), [])
+  const writablePolicies = useMemo(() => {
+    const map = new Map()
+    for (const step of roadmapQuery.data?.steps ?? []) for (const i of step.items) map.set(i.policyId, i.title)
+    // 필터로 보고 있던 정책이 아래 목록(50건)에 없어도 고를 수 있게 후기가 달린 정책도 넣는다
+    for (const [policyId, title] of reviewedPolicies) if (!map.has(policyId)) map.set(policyId, title)
+    for (const p of policyQuery.data?.content ?? []) if (!map.has(p.policyId)) map.set(p.policyId, p.title)
+    return [...map].map(([policyId, title]) => ({ policyId, title }))
+  }, [roadmapQuery.data, reviewedPolicies, policyQuery.data])
+
+  const listQuery = useApi(
     () =>
-      posts
-        .filter((p) => p.type === tab)
-        .filter((p) => policyFilter === 'ALL' || p.policy?.policyId === policyFilter)
-        .filter((p) => jobFilter === 'ALL' || p.jobCategory === jobFilter)
-        .filter((p) => !sameStageOnly || [p.authorStage, p.authorStageAfter].some((s) => profile.lifeStages.includes(s)))
-        .sort(SORTS[sort].compare),
-    [posts, tab, policyFilter, jobFilter, sameStageOnly, sort, profile.lifeStages],
+      postApi.list({
+        type: tab,
+        policyId: policyFilter === 'ALL' ? undefined : policyFilter,
+        jobCategory: jobFilter === 'ALL' ? undefined : jobFilter,
+        sameStage: sameStageOnly || undefined,
+        sort,
+        size: PAGE_SIZE,
+      }),
+    [tab, policyFilter, jobFilter, sameStageOnly, sort],
   )
+  const list = listQuery.data?.content ?? []
 
   const resetFilters = () => {
     setPolicyFilter('ALL')
@@ -51,12 +75,33 @@ export default function Community() {
     setSameStageOnly(false)
   }
 
-  const toggleLike = (postId) => setLiked((prev) => toggled(prev, postId))
+  // POST·DELETE /posts/{id}/likes — 응답의 liked·likeCount로 카드만 바꾼다
+  const toggleLike = async (post) => {
+    try {
+      const res = post.liked ? await postApi.unlike(post.postId) : await postApi.like(post.postId)
+      listQuery.setData((d) => ({
+        ...d,
+        content: d.content.map((p) => (p.postId === res.postId ? { ...p, liked: res.liked, likeCount: res.likeCount } : p)),
+      }))
+    } catch (err) {
+      window.alert(err.message)
+    }
+  }
 
-  const addReview = (review) => {
-    setPosts((prev) => [{ ...review, postId: Date.now(), likeCount: 0 }, ...prev])
-    setTab('PROGRAM_REVIEW')
+  const afterWrite = () => {
     setWriteOpen(false)
+    if (tab === 'PROGRAM_REVIEW') {
+      listQuery.reload()
+      reviewedQuery.reload()
+    } else {
+      setTab('PROGRAM_REVIEW')
+    }
+  }
+
+  const afterReport = (reported) => {
+    setReportTarget(null)
+    // 5건이 쌓여 숨겨졌을 수 있어 다시 불러온다
+    if (reported) listQuery.reload()
   }
 
   return (
@@ -96,19 +141,13 @@ export default function Community() {
           </div>
 
           <h3 className={styles.filterLabel}>정책·프로그램</h3>
-          <div className={styles.chips}>
-            <Chip size="sm" selected={policyFilter === 'ALL'} onClick={() => setPolicyFilter('ALL')}>전체</Chip>
-            {policies.map((p) => (
-              <Chip
-                key={p.policyId}
-                size="sm"
-                selected={policyFilter === p.policyId}
-                onClick={() => setPolicyFilter(p.policyId)}
-              >
-                {p.title}
-              </Chip>
-            ))}
-          </div>
+          <Select
+            label="정책·프로그램"
+            className={styles.policySelect}
+            value={policyFilter}
+            onChange={setPolicyFilter}
+            options={[['ALL', '전체'], ...reviewedPolicies]}
+          />
 
           <hr className={styles.rule} />
           <h3 className={styles.filterLabel}>직무</h3>
@@ -136,7 +175,7 @@ export default function Community() {
         <section aria-labelledby="post-list-title">
           <div className={styles.listHead}>
             <h2 id="post-list-title" className={styles.count}>
-              {POST_TYPE[tab]} <b>{list.length}</b>개
+              {POST_TYPE[tab]} <b>{listQuery.data?.totalElements ?? 0}</b>개
             </h2>
             <div className={styles.sortLabel}>
               <span aria-hidden="true">정렬</span>
@@ -145,12 +184,14 @@ export default function Community() {
                 className={styles.sortSelect}
                 value={sort}
                 onChange={setSort}
-                options={Object.entries(SORTS).map(([key, s]) => [key, s.label])}
+                options={Object.entries(SORTS)}
               />
             </div>
           </div>
 
-          {list.length === 0 ? (
+          {!listQuery.data ? (
+            <AsyncState loading={listQuery.loading} error={listQuery.error} onRetry={listQuery.reload} />
+          ) : list.length === 0 ? (
             <Card className={styles.empty}>
               <p>조건에 맞는 {POST_TYPE[tab]}가 아직 없어요.</p>
               <Button variant="outline" onClick={() => setWriteOpen(true)}>첫 후기 남기기</Button>
@@ -161,8 +202,7 @@ export default function Community() {
                 <PostCard
                   key={post.postId}
                   post={post}
-                  liked={liked.has(post.postId)}
-                  onLike={() => toggleLike(post.postId)}
+                  onLike={() => toggleLike(post)}
                   onReport={() => setReportTarget(post)}
                 />
               ))}
@@ -171,20 +211,27 @@ export default function Community() {
         </section>
       </div>
 
-      {writeOpen && <ReviewWriteModal onClose={() => setWriteOpen(false)} onSubmit={addReview} />}
-      {reportTarget && <ReportModal post={reportTarget} onClose={() => setReportTarget(null)} />}
+      {writeOpen && (
+        <ReviewWriteModal
+          policies={writablePolicies}
+          initialPolicyId={policyFilter === 'ALL' ? undefined : policyFilter}
+          onClose={() => setWriteOpen(false)}
+          onSubmit={afterWrite}
+        />
+      )}
+      {reportTarget && <ReportModal post={reportTarget} onClose={afterReport} />}
     </div>
   )
 }
 
-function PostCard({ post, liked, onLike, onReport }) {
+function PostCard({ post, onLike, onReport }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const { policy } = post
+  const { policy, liked } = post
 
   return (
     <Card as="article" className={styles.post}>
       <div className={styles.postTop}>
-        <Stars value={post.rating} size={12} />
+        {post.rating ? <Stars value={post.rating} size={12} /> : <span />}
         <div className={styles.menuWrap}>
           <button
             type="button"
@@ -204,7 +251,9 @@ function PostCard({ post, liked, onLike, onReport }) {
         </div>
       </div>
 
-      <h3 className={styles.postTitle}>{post.oneLiner}</h3>
+      <h3 className={styles.postTitle}>
+        <Link to={`/community/${post.postId}`}>{post.oneLiner}</Link>
+      </h3>
       <div className={styles.postTags}>
         <span className={styles.prep}>준비 {PREP_PERIOD[post.prepPeriod]}</span>
         {post.helpfulPoints.map((t) => (
@@ -212,8 +261,14 @@ function PostCard({ post, liked, onLike, onReport }) {
         ))}
       </div>
       <p className={styles.postPolicy}>
-        <Link to={`/policies/${policy.policyId}`}>{policy.title}</Link>
-        <span> · {JOB_CATEGORY[post.jobCategory].replace('·개발', '')}</span>
+        {policy && <Link to={`/policies/${policy.policyId}`}>{policy.title}</Link>}
+        {post.job && !policy && <Link to={`/jobs/${post.job.jobId}`}>{post.job.company}</Link>}
+        {post.jobCategory && (
+          <span>
+            {policy || post.job ? ' · ' : ''}
+            {JOB_CATEGORY[post.jobCategory].replace('·개발', '')}
+          </span>
+        )}
       </p>
 
       <div className={styles.postFoot}>
@@ -228,7 +283,7 @@ function PostCard({ post, liked, onLike, onReport }) {
           aria-label="도움돼요"
           onClick={onLike}
         >
-          <Heart size={14} aria-hidden="true" /> {post.likeCount + (liked ? 1 : 0)}
+          <Heart size={14} aria-hidden="true" /> {post.likeCount}
         </button>
       </div>
     </Card>
