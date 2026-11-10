@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ChevronRight, ScrollText, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ScrollText, Search } from 'lucide-react'
 import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card from '../../components/Card/Card.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
@@ -11,6 +11,8 @@ import { policyApi } from '../../api/index.js'
 import { useApi } from '../../hooks/useApi.js'
 import { formatRange } from '../../utils/date.js'
 import styles from './Policies.module.css'
+
+const PAGE_SIZE = 10
 
 // 지원정보 목록 (GET /policies). 기본은 접수 중·접수 예정, 마감 가까운 순. 로그인하면 내 진행상태가 함께 온다
 export default function Policies() {
@@ -33,11 +35,44 @@ export default function Policies() {
     return () => clearTimeout(t)
   }, [keyword])
 
+  // 페이지는 URL(?page=1부터)에 둔다. 분야나 검색어가 바뀌면 첫 페이지로
+  const urlPage = Math.max(0, Number(params.get('page') ?? 1) - 1 || 0)
+  const [page, setPage] = useState(urlPage)
+  const filterKey = `${field}|${query}`
+  const [lastFilterKey, setLastFilterKey] = useState(filterKey)
+  if (filterKey !== lastFilterKey) {
+    setLastFilterKey(filterKey)
+    setPage(0)
+  }
+
+  // 새로고침하면 이전 스크롤 위치 대신 맨 위에서 시작
+  useEffect(() => {
+    history.scrollRestoration = 'manual'
+    window.scrollTo(0, 0)
+    return () => {
+      history.scrollRestoration = 'auto'
+    }
+  }, [])
+
+  // 페이지 이동은 새로고침으로
+  const goPage = (n) => {
+    const next = new URLSearchParams(params)
+    next.set('page', n + 1)
+    if (query) next.set('keyword', query)
+    else next.delete('keyword')
+    window.location.search = next.toString()
+  }
+
   const { data, loading, error, reload } = useApi(
-    () => policyApi.list({ field: field ?? undefined, keyword: query || undefined, size: 50 }),
-    [field, query],
+    () => policyApi.list({ field: field ?? undefined, keyword: query || undefined, page, size: PAGE_SIZE }),
+    [field, query, page],
   )
   const list = data?.content ?? []
+  const totalPages = data?.totalPages ?? 0
+
+  // 현재 페이지 기준 최대 5개 번호
+  const start = Math.max(0, Math.min(page - 2, totalPages - 5))
+  const pageNumbers = Array.from({ length: Math.min(5, totalPages) }, (_, i) => start + i)
 
   return (
     <div className={styles.page}>
@@ -91,6 +126,27 @@ export default function Policies() {
                   </li>
                 ))}
               </ul>
+            )}
+            {totalPages > 1 && (
+              <nav className={styles.pager} aria-label="페이지">
+                <button type="button" onClick={() => goPage(page - 1)} disabled={page === 0} aria-label="이전 페이지">
+                  <ChevronLeft size={16} aria-hidden="true" />
+                </button>
+                {pageNumbers.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => goPage(n)}
+                    aria-current={n === page ? 'page' : undefined}
+                    className={n === page ? styles.current : undefined}
+                  >
+                    {n + 1}
+                  </button>
+                ))}
+                <button type="button" onClick={() => goPage(page + 1)} disabled={page >= totalPages - 1} aria-label="다음 페이지">
+                  <ChevronRight size={16} aria-hidden="true" />
+                </button>
+              </nav>
             )}
           </>
         )}
