@@ -1,0 +1,30 @@
+name: FE CI
+
+on:
+  pull_request:
+    branches: [develop, main]   # develop·main으로 가는 PR마다
+  push:
+    branches: [develop]         # develop에 머지됐을 때도 한 번 더
+
+jobs:
+  build:                        # job 이름. 나중에 '필수 체크'로 지정할 때 이 이름이 보임
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 받기
+        uses: actions/checkout@v4
+
+      - name: Node 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24      # 로컬과 같은 버전. Vite 8은 20.19 이상 필요
+          cache: npm            # package-lock.json 기준으로 node_modules 캐시 → 두 번째부터 빨라짐
+
+      - name: 의존성 설치
+        run: npm ci             # npm install 대신 ci: lock 파일 그대로 설치, lock이 package.json과 안 맞으면 실패
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
