@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const ACCESS = 'accessToken'
 const REFRESH = 'refreshToken'
+const unused = 1
 
 export const tokens = {
   access: () => localStorage.getItem(ACCESS),
