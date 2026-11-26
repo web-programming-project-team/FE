@@ -4,10 +4,10 @@ on:
   pull_request:
     branches: [develop, main]   # develop·main으로 가는 PR마다
   push:
-    branches: [develop]         # develop에 머지됐을 때도 한 번 더
+    branches: [develop, main]   # 머지됐을 때도 한 번 더. main이면 build 후 deploy까지
 
 jobs:
-  build:                        # job 이름. 나중에 '필수 체크'로 지정할 때 이 이름이 보임
+  build:                        # job 이름. '필수 체크'로 지정할 때 이 이름이 보임
     runs-on: ubuntu-latest
 
     steps:
@@ -18,13 +18,65 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24      # 로컬과 같은 버전. Vite 8은 20.19 이상 필요
-          cache: npm            # package-lock.json 기준으로 node_modules 캐시 → 두 번째부터 빨라짐
+          cache: npm            # package-lock.json 기준으로 node_modules 캐시
 
       - name: 의존성 설치
-        run: npm ci             # npm install 대신 ci: lock 파일 그대로 설치, lock이 package.json과 안 맞으면 실패
+        run: npm ci             # lock 파일 그대로 설치, lock이 package.json과 안 맞으면 실패
 
       - name: Lint
         run: npm run lint
 
       - name: Build
         run: npm run build
+        env:
+          VITE_API_BASE_URL: /api/v1   # CI에는 .env가 없다. client.js에 기본값이 없어 꼭 필요 (nginx가 /api를 BE로 넘김)
+
+      # main에 머지됐을 때만 dist를 deploy job에 넘긴다
+      - name: dist 넘기기
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  # build가 성공하고 main에 머지됐을 때만 운영 서버(EC2)에 배포
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: deploy-fe
+    env:
+      HOST: ${{ secrets.EC2_HOST }}
+
+    steps:
+      - name: dist 받기
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: SSH 키 준비
+        env:
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+
+      - name: 올리고 교체
+        run: |
+          tar czf dist.tgz -C dist .
+          scp -i ~/.ssh/deploy_key dist.tgz ubuntu@$HOST:~/dist.tgz
+          ssh -i ~/.ssh/deploy_key ubuntu@$HOST 'bash -s' <<'EOF'
+          set -e
+          rm -rf ~/fe-new && mkdir ~/fe-new
+          tar xzf ~/dist.tgz -C ~/fe-new
+          sudo rsync -a --delete ~/fe-new/ /var/www/next-siheung/
+          rm -rf ~/fe-new ~/dist.tgz
+          echo "FE 배포 완료"
+          EOF
+
+      - name: 사이트 응답 확인
+        run: curl -fsS -o /dev/null "https://$HOST/" && echo "OK"
