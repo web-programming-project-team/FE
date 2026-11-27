@@ -1,0 +1,355 @@
+.page {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  position: relative;
+  isolation: isolate;
+  padding: var(--space-10) var(--space-10) var(--space-8);
+  border-radius: var(--radius-card);
+  /* 장식: 오른쪽 위 반투명 링, 오른쪽 아래 보라 원 (시흥시 하위 페이지 제목 블록 참고) */
+  background:
+    radial-gradient(circle at calc(100% - 260px) -30px, transparent 62px, var(--color-hero-ring) 63px 100px, transparent 101px),
+    radial-gradient(circle at calc(100% - 20px) calc(100% + 40px), var(--color-hero-circle) 0 115px, transparent 116px),
+    linear-gradient(120deg, var(--color-hero-from), var(--color-hero-to));
+  color: var(--color-card);
+  overflow: hidden;
+}
+
+/* 장식: 보라 원과 겹치는 사선 줄무늬 원 */
+.head::after {
+  content: "";
+  position: absolute;
+  right: 70px;
+  bottom: -90px;
+  z-index: -1;
+  width: 170px;
+  height: 170px;
+  border-radius: var(--radius-pill);
+  background: repeating-linear-gradient(-45deg, var(--color-hero-stripe) 0 3px, transparent 3px 11px);
+}
+
+.heroLink {
+  margin-top: var(--space-5);
+}
+
+/* 히어로 안 글자는 배경 위에서 읽히도록 흰색 계열로 */
+.head .eyebrow {
+  color: var(--color-primary-soft);
+}
+
+.head .description,
+.head .link,
+.head .link:hover {
+  color: var(--color-card);
+}
+
+.head .link:hover {
+  text-decoration: underline;
+}
+
+.eyebrow,
+.startHere {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-primary-strong);
+}
+
+.title {
+  margin-top: var(--space-2);
+  font-size: var(--fs-4xl);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  margin-top: var(--space-3);
+  font-size: var(--fs-base);
+  color: var(--color-text-2);
+}
+
+.link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--color-text-2);
+  white-space: nowrap;
+}
+
+.link:hover,
+.edit:hover {
+  color: var(--color-primary-strong);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--side-width);
+  align-items: start;
+  gap: var(--space-8);
+}
+
+.roadmap {
+  padding: var(--space-7);
+}
+
+.progressHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.progressHead b {
+  color: var(--color-text);
+}
+
+.bar {
+  height: 6px;
+  margin-top: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-fill);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+}
+
+.steps {
+  margin-top: var(--space-6);
+}
+
+.current {
+  display: flex;
+  gap: var(--space-4);
+  margin-block: var(--space-2);
+  padding-block: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.current:not(:first-child) {
+  border-top: 1px solid var(--color-line);
+}
+
+.currentTitle {
+  margin-top: var(--space-1);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.currentBody {
+  margin-top: var(--space-2);
+  color: var(--color-text-2);
+}
+
+.cta {
+  margin-top: var(--space-5);
+}
+
+.order {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--color-fill);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text-2);
+}
+
+.orderCurrent {
+  width: 36px;
+  height: 36px;
+  background: var(--color-primary);
+  color: var(--color-card);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 52px;
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-3);
+}
+
+.row:hover {
+  background: var(--color-bg);
+}
+
+.rowTitle {
+  flex: 1;
+  font-size: var(--fs-base);
+  color: var(--color-text);
+}
+
+.rowState {
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+.side {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.sideHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sideTitle {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+
+.edit {
+  font-size: var(--fs-sm);
+  color: var(--color-text-2);
+}
+
+.label {
+  margin-top: var(--space-5);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--color-text-3);
+}
+
+.value {
+  margin-top: var(--space-2);
+  font-size: var(--fs-base);
+  font-weight: 700;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.sideNote {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.guide {
+  padding-inline: var(--space-1);
+  line-height: 1.7;
+  color: var(--color-text-2);
+}
+
+.guideTitle {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.guideNote {
+  margin-top: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-3);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.sectionTitle {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.interests {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+.interest {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-text-2);
+  transition: background-color 0.15s;
+}
+
+.interest:hover {
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.interest > span {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.interest strong {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+@media (max-width: 960px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    gap: var(--space-8);
+  }
+
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-6);
+  }
+
+  .title {
+    font-size: var(--fs-2xl);
+  }
+
+  .roadmap {
+    padding: var(--space-5);
+  }
+
+  .current {
+    gap: var(--space-3);
+  }
+
+  .cta {
+    width: 100%;
+  }
+}

@@ -1,0 +1,37 @@
+.collapse {
+  width: 100%;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.open {
+  grid-template-rows: 1fr;
+}
+
+.inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 다 펼친 뒤에는 안쪽 드롭다운(진행상태 메뉴 등)이 잘리지 않도록 */
+.open > .inner {
+  animation: show-overflow 0s 0.25s forwards;
+}
+
+@keyframes show-overflow {
+  to {
+    overflow: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse {
+    transition: none;
+  }
+
+  .open > .inner {
+    animation: none;
+    overflow: visible;
+  }
+}

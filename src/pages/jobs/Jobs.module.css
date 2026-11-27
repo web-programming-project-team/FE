@@ -8,24 +8,11 @@
   justify-items: start;
 }
 
-.title {
-  font-size: var(--fs-3xl);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.description {
-  margin-top: var(--space-2);
-  font-size: var(--fs-base);
-  color: var(--color-text-3);
-}
-
 .conditions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-6);
 }
 
 .conditions > span:not(.note) {
@@ -56,6 +43,11 @@
   width: 100%;
 }
 
+.main {
+  display: grid;
+  gap: var(--space-4);
+}
+
 .columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--side-width);
@@ -75,11 +67,11 @@
   align-items: baseline;
   gap: var(--space-2);
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .listTitle span {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .listTitle small {
@@ -87,16 +79,6 @@
   font-size: var(--fs-xs);
   font-weight: 400;
   color: var(--color-text-3);
-}
-
-.sort {
-  height: 44px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  background: var(--color-card);
-  font-size: var(--fs-sm);
-  color: var(--color-text-2);
 }
 
 .listNote {
@@ -139,13 +121,13 @@
 .new {
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .jobTitle {
   margin-top: var(--space-1);
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .jobTools {
@@ -168,7 +150,7 @@
 }
 
 .saved {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   fill: var(--color-primary);
 }
 
@@ -203,7 +185,7 @@
 
 .supportTitle {
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primary-strong);
 }
 
@@ -225,7 +207,7 @@
   align-items: center;
   gap: var(--space-0-5);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text);
 }
 
@@ -241,7 +223,6 @@
 .side {
   display: grid;
   gap: var(--space-5);
-  margin-top: calc(var(--space-10) + var(--space-5));
 }
 
 .sideDescription {
@@ -266,7 +247,7 @@
 
 .pass strong {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.6;
 }
 
@@ -295,7 +276,7 @@
   align-items: center;
   gap: var(--space-0-5);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
 }
 
@@ -352,8 +333,39 @@
   .columns {
     grid-template-columns: minmax(0, 1fr);
   }
+}
 
-  .side {
-    margin-top: 0;
-  }
+/* 맞춤 공고 · 관심 공고 탭 */
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.tab {
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--color-text-3);
+}
+
+.tab span {
+  margin-left: var(--space-1);
+  color: var(--color-primary-strong);
+}
+
+.tabActive {
+  border-bottom-color: var(--color-primary-strong);
+  color: var(--color-text);
+}
+
+.jobLink:hover {
+  text-decoration: underline;
+}
+
+.closedJob {
+  opacity: 0.6;
 }

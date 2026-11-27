@@ -4,9 +4,9 @@
   justify-content: center;
   gap: var(--space-1-5);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-  transition: background-color 0.15s, border-color 0.15s;
+  transition: background-color 0.15s, filter 0.15s;
 }
 
 .button:disabled {
@@ -40,17 +40,34 @@
   background: var(--color-primary-strong);
 }
 
+.accent {
+  background: var(--color-accent);
+  color: var(--color-card);
+}
+
+.accent:hover:not(:disabled) {
+  background: var(--color-accent-strong);
+}
+
 .outline {
-  background: var(--color-card);
+  background: var(--control-bg);
   color: var(--color-text);
-  border: 1px solid var(--color-line);
 }
 
 .outline:hover:not(:disabled) {
-  background: var(--color-bg);
+  filter: brightness(0.97);
 }
 
 .soft {
   background: var(--color-primary-soft);
   color: var(--color-primary-strong);
+}
+
+.ghost {
+  color: var(--color-text-2);
+  font-weight: 400;
+}
+
+.ghost:hover {
+  background: var(--color-fill);
 }

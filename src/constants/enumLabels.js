@@ -77,6 +77,9 @@ export const POST_TYPE = {
   PORTFOLIO: '포트폴리오',
 }
 
+// 후기 쓰기의 '도움이 된 점' 선택지 (서버는 자유 문자열로 받는다)
+export const HELPFUL_POINTS = ['실무 과제', '멘토 피드백', '직무 탐색', '서류 준비', '면접 준비', '자격증']
+
 export const PREP_PERIOD = {
   WEEK_1: '1주 이내',
   MONTH_1: '1개월',
@@ -107,3 +110,7 @@ export const NOTIFICATION_TYPE = {
   NEW_REVIEW: '관심 항목 새 후기',
   SYSTEM: '공지',
 }
+
+// 후기 작성자 상황 표시: 졸업 예정 → 첫 취업
+export const authorStageLabel = ({ authorStage, authorStageAfter }) =>
+  authorStageAfter ? `${LIFE_STAGE[authorStage]} → ${LIFE_STAGE[authorStageAfter]}` : LIFE_STAGE[authorStage]

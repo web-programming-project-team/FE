@@ -1,13 +1,15 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bell, ChevronLeft, ChevronRight } from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import PageHead from '../../components/PageHead/PageHead.jsx'
 import Card, { CardHeader } from '../../components/Card/Card.jsx'
 import DdayTag from '../../components/DdayTag/DdayTag.jsx'
 import StatusSelect from '../../components/StatusSelect/StatusSelect.jsx'
+import AsyncState from '../../components/AsyncState/AsyncState.jsx'
 import { EVENT_TYPE } from '../../constants/enumLabels.js'
-import { BASE_DATE, events, policyById } from '../../mocks/data.js'
-import { useAppState } from '../../context/AppState.jsx'
-import { formatDot, formatShort, parseDate, toIso, today, weekdayOf } from '../../utils/date.js'
+import { calendarApi } from '../../api/index.js'
+import { useApi } from '../../hooks/useApi.js'
+import { formatDot, formatShort, formatTime, parseDate, toIso, today, weekdayOf } from '../../utils/date.js'
 import styles from './Calendar.module.css'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -19,6 +21,10 @@ const DOT = {
   JOB_DEADLINE: styles.jobDeadline,
   CUSTOM: styles.custom,
 }
+
+// 로드맵 항목에서 자동으로 생긴 일정(itemStatus가 있음)은 지울 수 없다. 직접 추가한 정책·CUSTOM 일정만 삭제
+const deletable = (e) => e.sourceType === 'CUSTOM' || (e.sourceType === 'POLICY' && !e.itemStatus)
+const targetOf = (e) => (e.sourceType === 'POLICY' ? `/policies/${e.sourceId}` : e.sourceType === 'JOB' ? '/jobs' : null)
 
 // 일요일 시작, 그 달을 덮는 주 수만큼의 격자
 function monthGrid(year, month) {
@@ -32,15 +38,18 @@ function monthGrid(year, month) {
   })
 }
 
+// NEXT 캘린더: 월별 일정(GET /calendar/events) + 다가오는 7일 마감(GET /calendar/events/upcoming)
 export default function Calendar() {
-  const { unreadCount, setNotificationOpen } = useAppState()
-  const [selected, setSelected] = useState('2026-11-05')
+  const [selected, setSelected] = useState(() => toIso(today()))
   const [view, setView] = useState(() => {
-    const d = parseDate('2026-11-05')
+    const d = today()
     return { year: d.getFullYear(), month: d.getMonth() }
   })
 
-  const byDate = useMemo(() => Object.groupBy(events, (e) => e.date), [])
+  const monthQuery = useApi(() => calendarApi.monthly(view.year, view.month + 1), [view.year, view.month])
+  const upcomingQuery = useApi(() => calendarApi.upcoming(7), [])
+  const events = useMemo(() => monthQuery.data ?? [], [monthQuery.data])
+  const byDate = useMemo(() => Object.groupBy(events, (e) => e.date), [events])
   const cells = monthGrid(view.year, view.month)
   const shift = (delta) =>
     setView(({ year, month }) => {
@@ -48,17 +57,25 @@ export default function Calendar() {
       return { year: d.getFullYear(), month: d.getMonth() }
     })
 
+  const remove = async (eventId) => {
+    if (!window.confirm('이 일정을 지울까요?')) return
+    try {
+      await calendarApi.remove(eventId)
+      monthQuery.reload()
+      upcomingQuery.reload()
+    } catch (err) {
+      window.alert(err.message)
+    }
+  }
+
   return (
     <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.title}>NEXT 캘린더</h1>
-          <p className={styles.description}>준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요.</p>
-        </div>
-        <button type="button" className={styles.notiButton} onClick={() => setNotificationOpen(true)}>
-          <Bell size={16} aria-hidden="true" /> 알림 {unreadCount > 0 && <span>{unreadCount}</span>}
-        </button>
-      </header>
+      <PageHead
+        decor="calendar"
+        icon={CalendarDays}
+        title="NEXT 캘린더"
+        description="준비부터 마감까지, 내 로드맵의 일정을 한눈에 확인해요."
+      />
 
       <div className={styles.columns}>
         <Card className={styles.calendar}>
@@ -74,7 +91,7 @@ export default function Calendar() {
                 <ChevronRight size={18} />
               </button>
             </div>
-            <span className={styles.base}>기준일 {formatDot(BASE_DATE)}</span>
+            <span className={styles.base}>오늘 {formatDot(toIso(today()))}</span>
           </div>
 
           <ul className={styles.legend}>
@@ -86,6 +103,7 @@ export default function Calendar() {
             ))}
           </ul>
 
+          {monthQuery.error && <AsyncState error={monthQuery.error} onRetry={monthQuery.reload} />}
           <div className={styles.gridWrap}>
             <div className={styles.grid} role="grid" aria-label={`${view.year}년 ${view.month + 1}월`}>
               {WEEKDAYS.map((w) => (
@@ -117,7 +135,7 @@ export default function Calendar() {
                       {dayEvents.map((e) => (
                         <span key={e.eventId} className={styles.cellEvent}>
                           <span className={`${styles.dot} ${styles.small} ${DOT[e.type]}`} aria-hidden="true" />
-                          {e.title}
+                          <span className={styles.cellTitle}>{e.title}</span>
                         </span>
                       ))}
                     </span>
@@ -129,16 +147,15 @@ export default function Calendar() {
         </Card>
 
         <aside className={styles.side}>
-          <SelectedDay date={selected} list={byDate[selected] ?? []} />
-          <WeekDeadlines />
+          <SelectedDay date={selected} list={byDate[selected] ?? []} onRemove={remove} />
+          <WeekDeadlines list={upcomingQuery.data} />
         </aside>
       </div>
     </div>
   )
 }
 
-function SelectedDay({ date, list }) {
-  const { policyStatus, setPolicyStatus } = useAppState()
+function SelectedDay({ date, list, onRemove }) {
   const d = parseDate(date)
   return (
     <Card>
@@ -154,25 +171,28 @@ function SelectedDay({ date, list }) {
       ) : (
         <ul className={styles.selList}>
           {list.map((e) => {
-            const policy = e.policyId ? policyById(e.policyId) : null
-            const target = policy ? `/policies/${policy.policyId}` : '/jobs'
+            const target = targetOf(e)
             return (
               <li key={e.eventId}>
                 <p className={styles.selType}>
                   <span className={`${styles.dot} ${DOT[e.type]}`} aria-hidden="true" />
                   {EVENT_TYPE[e.type]}
-                  {e.time && ` · ${e.time}`}
+                  {e.eventTime && ` · ${formatTime(e.eventTime)}`}
                 </p>
-                <Link to={target} className={styles.selTitle}>
-                  {policy?.title ?? e.title}
-                  <ChevronRight size={18} aria-hidden="true" />
-                </Link>
-                {(e.place || policy) && <p className={styles.muted}>{e.place ?? policy.organization}</p>}
-                {policy && (
-                  <StatusSelect
-                    value={policyStatus(policy.policyId)}
-                    onChange={(s) => setPolicyStatus(policy.policyId, s)}
-                  />
+                {target ? (
+                  <Link to={target} className={styles.selTitle}>
+                    {e.title}
+                    <ChevronRight size={18} aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <p className={styles.selTitle}>{e.title}</p>
+                )}
+                {/* 로드맵 항목 일정이면 그 진행상태 (변경은 내 로드맵·정책 상세에서) */}
+                {e.itemStatus && <StatusSelect value={e.itemStatus} />}
+                {deletable(e) && (
+                  <button type="button" className={styles.muted} onClick={() => onRemove(e.eventId)}>
+                    <Trash2 size={14} aria-hidden="true" /> 일정 삭제
+                  </button>
                 )}
               </li>
             )
@@ -183,37 +203,29 @@ function SelectedDay({ date, list }) {
   )
 }
 
-function WeekDeadlines() {
-  const start = today()
-  start.setDate(start.getDate() - start.getDay())
-  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6)
-  const [from, to] = [toIso(start), toIso(end)]
-  const list = events.filter(
-    (e) => (e.type === 'APPLY_END' || e.type === 'JOB_DEADLINE') && e.date >= from && e.date <= to,
-  )
+function WeekDeadlines({ list }) {
+  const deadlines = (list ?? []).filter((e) => e.type === 'APPLY_END' || e.type === 'JOB_DEADLINE')
+  const from = today()
+  const to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + 7)
 
   return (
     <Card>
       <CardHeader title="이번 주 마감" />
       <p className={styles.muted}>
-        {formatDot(from)}–{formatShort(to)} · 일요일 시작
+        {formatDot(toIso(from))}–{formatShort(toIso(to))} · 오늘부터 7일
       </p>
       <ul className={styles.weekList}>
-        {list.map((e) => {
-          const policy = e.policyId ? policyById(e.policyId) : null
-          return (
-            <li key={e.eventId}>
-              <div>
-                <strong>{policy?.title ?? e.title}</strong>
-                <span className={styles.muted}>{formatShort(e.date)} 마감</span>
-              </div>
-              <DdayTag date={e.date} />
-            </li>
-          )
-        })}
-        {list.length === 0 && <li className={styles.muted}>이번 주 마감 일정이 없어요.</li>}
+        {deadlines.map((e) => (
+          <li key={e.eventId}>
+            <div>
+              <strong>{e.title}</strong>
+              <span className={styles.muted}>{formatShort(e.date)} 마감</span>
+            </div>
+            <DdayTag dDay={e.dDay} />
+          </li>
+        ))}
+        {list && deadlines.length === 0 && <li className={styles.muted}>이번 주 마감 일정이 없어요.</li>}
       </ul>
-      <p className={styles.weekNote}>이번 주와 D-day는 기준일 {formatDot(BASE_DATE)}를 기준으로 표시해요.</p>
     </Card>
   )
 }

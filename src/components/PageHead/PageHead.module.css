@@ -1,0 +1,160 @@
+.head {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  justify-self: stretch;
+  min-height: 140px;   /* 메뉴마다 상단 박스 높이 통일 (로드맵 진행률 영역 기준) */
+  padding: var(--space-7) var(--space-8);
+  border-radius: var(--radius-card);
+  /* 장식: 오른쪽 아래 걸친 흰 링, 오른쪽 위 작은 보라 점 (홈 히어로와 같은 계열, 더 옅게) */
+  background:
+    radial-gradient(circle at calc(100% - 120px) calc(100% + 40px), transparent 70px, var(--color-head-ring) 71px 96px, transparent 97px),
+    radial-gradient(circle at calc(100% - 290px) 26px, var(--color-hero-circle) 0 9px, transparent 10px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+  --control-bg: var(--color-card);   /* 파랑 위의 버튼은 흰 면 */
+  color: var(--color-card);
+  overflow: hidden;
+}
+
+/* 장식: 링 옆 점 무늬 */
+.head::after {
+  content: "";
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-8);
+  z-index: -1;
+  width: 112px;
+  height: 64px;
+  background: radial-gradient(var(--color-head-dot) 2px, transparent 2.5px) 0 0 / 16px 16px;
+  mask-image: linear-gradient(to left, var(--color-text), transparent);   /* 오른쪽에서 왼쪽으로 사라짐 */
+}
+
+.quiet {
+  background:
+    radial-gradient(circle at calc(100% - 120px) calc(100% + 40px), transparent 70px, var(--color-head-ring) 71px 96px, transparent 97px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+.quiet::after {
+  content: none;
+}
+
+/* 메뉴별 장식. 색은 기본 장식과 같은 흰 반투명 면과 보라 점만 쓴다 */
+.jobs,
+.policies,
+.community,
+.calendar {
+  background: linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+/* 맞춤 채용: 위로 잘린 큰 링, 아래로 잘린 흰 원, 그 사이 보라 점, 오른쪽 아래 점 무늬 */
+.jobs {
+  background:
+    radial-gradient(circle at calc(100% - 96px) -18px, transparent 58px, var(--color-head-ring) 59px 80px, transparent 81px),
+    radial-gradient(circle at calc(100% - 268px) calc(100% + 14px), var(--color-head-ring) 0 40px, transparent 41px),
+    radial-gradient(circle at calc(100% - 204px) 36px, var(--color-hero-circle) 0 8px, transparent 9px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+.jobs::after {
+  top: auto;
+  right: var(--space-6);
+  bottom: var(--space-3);
+}
+
+/* 지원정보: 오른쪽에 겹친 링 두 개, 그 왼쪽 위에 점 무늬 */
+.policies {
+  background:
+    radial-gradient(circle at calc(100% - 70px) 30%, transparent 46px, var(--color-head-ring) 47px 66px, transparent 67px),
+    radial-gradient(circle at calc(100% - 150px) 85%, transparent 46px, var(--color-head-ring) 47px 66px, transparent 67px),
+    radial-gradient(circle at calc(100% - 128px) 24px, var(--color-hero-circle) 0 8px, transparent 9px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+.policies::after {
+  right: 200px;
+}
+
+/* 커뮤니티: 버튼 뒤로 아래 잘린 큰 링, 위로 잘린 흰 원, 작은 링과 보라 점을 흩어 둔다 */
+.community {
+  background:
+    radial-gradient(circle at calc(100% - 110px) calc(100% + 26px), transparent 50px, var(--color-head-ring) 51px 68px, transparent 69px),
+    radial-gradient(circle at calc(100% - 320px) -8px, var(--color-head-ring) 0 34px, transparent 35px),
+    radial-gradient(circle at calc(100% - 214px) 30px, transparent 11px, var(--color-head-ring) 12px 17px, transparent 18px),
+    radial-gradient(circle at calc(100% - 262px) 104px, var(--color-hero-circle) 0 7px, transparent 8px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+.community::after {
+  top: auto;
+  right: 360px;
+  bottom: var(--space-3);
+}
+
+/* NEXT 캘린더: 오른쪽으로 잘린 큰 흰 원, 아래로 잘린 링, 작은 링과 보라 점, 왼쪽 위 점 무늬 */
+.calendar {
+  background:
+    radial-gradient(circle at calc(100% + 18px) 34px, var(--color-head-ring) 0 72px, transparent 73px),
+    radial-gradient(circle at calc(100% - 236px) calc(100% + 22px), transparent 38px, var(--color-head-ring) 39px 54px, transparent 55px),
+    radial-gradient(circle at calc(100% - 410px) 100px, transparent 9px, var(--color-head-ring) 10px 15px, transparent 16px),
+    radial-gradient(circle at calc(100% - 150px) 104px, var(--color-hero-circle) 0 9px, transparent 10px),
+    linear-gradient(120deg, var(--color-head-from), var(--color-head-to));
+}
+
+.calendar::after {
+  right: 250px;
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--color-on-head-soft);
+  color: var(--color-card);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-card);
+}
+
+.description {
+  margin-top: var(--space-1);
+  font-size: var(--fs-base);
+  color: var(--color-card);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+@media (max-width: 720px) {
+  .head {
+    padding: var(--space-5);
+  }
+
+  .icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .title {
+    font-size: var(--fs-2xl);
+  }
+}

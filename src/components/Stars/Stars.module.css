@@ -5,19 +5,19 @@
 }
 
 .on {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   fill: var(--color-primary);
 }
 
 .off {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   fill: none;
 }
 
 .score {
   margin-left: var(--space-2);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }
 
@@ -35,6 +35,6 @@
 .inputScore {
   margin-left: var(--space-2);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-2);
 }

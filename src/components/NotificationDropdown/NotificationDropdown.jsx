@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../../context/AppState.jsx'
+import { notificationPath, splitDday } from '../../utils/notification.js'
 import styles from './NotificationDropdown.module.css'
 
 const TABS = [
@@ -19,7 +20,7 @@ const CATEGORY = {
 }
 
 // 알림 센터 — 헤더 종 아이콘 드롭다운 (별도 경로 없음)
-export default function NotificationDropdown({ onClose }) {
+export default function NotificationDropdown({ onClose, className = '', onAnimationEnd }) {
   const { notifications, unreadCount, markRead, markAllRead } = useAppState()
   const [tab, setTab] = useState('ALL')
   const ref = useRef(null)
@@ -40,7 +41,7 @@ export default function NotificationDropdown({ onClose }) {
   const list = tab === 'ALL' ? notifications : notifications.filter((n) => n.type === tab)
 
   return (
-    <div className={styles.panel} ref={ref} role="dialog" aria-label="알림">
+    <div className={`${styles.panel} ${className}`} ref={ref} role="dialog" aria-label="알림" onAnimationEnd={onAnimationEnd}>
       <div className={styles.head}>
         <h2 className={styles.title}>
           알림 {unreadCount > 0 && <span className={styles.count}>{unreadCount}</span>}
@@ -65,7 +66,9 @@ export default function NotificationDropdown({ onClose }) {
       </div>
       <ul className={styles.list}>
         {list.length === 0 && <li className={styles.empty}>새 알림이 없어요</li>}
-        {list.map((n) => (
+        {list.map((n) => {
+          const [text, dday] = splitDday(n.title)
+          return (
           <li key={n.notificationId}>
             <button
               type="button"
@@ -73,7 +76,7 @@ export default function NotificationDropdown({ onClose }) {
               onClick={() => {
                 markRead(n.notificationId)
                 onClose()
-                navigate(n.link)
+                navigate(notificationPath(n.link))
               }}
             >
               <span className={styles.dot} aria-hidden="true" />
@@ -81,13 +84,14 @@ export default function NotificationDropdown({ onClose }) {
                 {CATEGORY[n.type]}
               </span>
               <strong className={styles.itemTitle}>
-                {n.title}
-                {n.dday && <em className={styles.dday}>{n.dday}</em>}
+                {text}
+                {dday && <em className={styles.dday}>{dday}</em>}
               </strong>
               <span className={styles.body}>{n.body}</span>
             </button>
           </li>
-        ))}
+          )
+        })}
       </ul>
     </div>
   )
